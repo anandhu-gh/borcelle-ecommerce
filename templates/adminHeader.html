@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Borcelle Admin</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<style>
+body{
+    margin:0;
+    background:#f3f4f6;
+    font-family:Inter,sans-serif;
+}
+
+.sidebar{
+    width:250px;
+    height:100vh;
+    position:fixed;
+    background:#fff;
+    padding:20px;
+    border-right:1px solid #ddd;
+}
+
+.profile{
+    text-align:center;
+    border-bottom:1px solid #eee;
+    padding-bottom:20px;
+    margin-bottom:20px;
+}
+
+.profile img{
+    width:65px;
+    height:65px;
+    border-radius:50%;
+}
+
+.sidebar a{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:11px 14px;
+    margin-bottom:6px;
+    text-decoration:none;
+    color:#333;
+    border-radius:10px;
+}
+
+.sidebar a:hover{
+    background:#f1f5f9;
+    color:#1b4332;
+}
+
+.main{
+    margin-left:250px;
+}
+
+.topbar{
+    background:#fff;
+    padding:15px 25px;
+    border-bottom:1px solid #ddd;
+}
+
+.content{
+    padding:30px;
+}
+
+.footer{
+    text-align:center;
+    padding:15px;
+    background:#fff;
+    border-top:1px solid #ddd;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+    <div class="profile">
+
+        <img src="https://cdn-icons-png.flaticon.com/512/9322/9322127.png">
+
+        <h6 class="mt-2 mb-0">Administrator</h6>
+
+        <small class="text-muted">
+            Main Controller
+        </small>
+
+    </div>
+
+    <a href="{% url 'adminhome' %}">
+        <i class="bi bi-speedometer2"></i>
+        Dashboard
+    </a>
+
+    <a href="{% url 'adminproducts' %}">
+        <i class="bi bi-box-seam"></i>
+        Manage Inventory
+    </a>
+
+    <a href="{% url 'addproductform' %}">
+        <i class="bi bi-plus-circle"></i>
+        Add Product
+    </a>
+
+    <a href="{% url 'addcategory' %}">
+        <i class="bi bi-grid"></i>
+        Categories
+    </a>
+    
+    <a href="{% url 'adddeliveryboy' %}">
+        <i class="bi bi-truck"></i>
+        Add Delivery Person
+    </a>
+
+    <a href="#">
+        <i class="bi bi-gear"></i>
+        System Config
+    </a>
+
+    <a href="#">
+        <i class="bi bi-people"></i>
+        Staff Accounts
+    </a>
+
+    <a href="{% url 'logout' %}"
+       class="btn btn-outline-danger mt-3">
+
+        <i class="bi bi-box-arrow-right"></i>
+        Logout
+
+    </a>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+    <!-- HEADER -->
+
+    <div class="topbar d-flex justify-content-between align-items-center">
+
+        <a class="fw-bold text-dark text-decoration-none d-flex align-items-center gap-2"
+           href="{% url 'adminhome' %}">
+
+            <img src="https://marketplace.canva.com/EAGFyCMc17Q/2/0/1600w/canva-dark-green-modern-icons-home-furnishing-logo-fAa79wXM5QY.jpg"
+                 width="35"
+                 style="border-radius:8px;">
+
+            Borcelle Admin
+
+        </a>
+
+        <div class="d-flex align-items-center gap-4">
+
+            <a href="{% url 'home' %}"
+               class="text-dark text-decoration-none">
+
+                <i class="bi bi-globe"></i>
+                Live Store
+
+            </a>
+
+            <a href="{% url 'adminorders' %}"
+               class="text-dark text-decoration-none">
+
+                <i class="bi bi-box-seam"></i>
+                Orders
+
+            </a>
+
+            <i class="bi bi-bell fs-5"></i>
+
+        </div>
+
+    </div>
+
+    <!-- CONTENT -->
+
+    <div class="content">
+
+        {% block content %}
+        {% endblock %}
+
+    </div>
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+
+        <strong>Borcelle Furniture ERP</strong><br>
+
+        © 2026 Internal Management Portal
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

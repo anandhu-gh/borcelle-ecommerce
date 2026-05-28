@@ -1,0 +1,90 @@
+{% extends "customerHeader.html" %}
+{% block content %}
+
+<style>
+.store-page-header { text-align: center; margin-bottom: 40px; }
+.store-page-header h1 { font-family: 'Playfair Display', serif; font-size: 2.8rem; color: #1b4332; font-weight: 700; margin-bottom: 10px; }
+.store-page-header p { color: #718096; }
+
+.store-prod-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+}
+.store-card {
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 16px;
+  overflow: hidden; display: flex; flex-direction: column;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.store-card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.06); border-color: #cbd5e1; }
+.store-card-img { height: 280px; background: #f8fafc; overflow: hidden; }
+.store-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+.store-card:hover .store-card-img img { transform: scale(1.05); }
+
+.store-card-body { padding: 20px; display: flex; flex-direction: column; flex: 1; }
+.store-card-title { font-size: 1.1rem; font-weight: 600; color: #2d3748; margin-bottom: 8px; }
+.store-card-desc { font-size: 0.9rem; color: #718096; margin-bottom: 20px; line-height: 1.5; flex: 1; }
+.store-card-bottom { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 15px; }
+.store-card-price { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; color: #1b4332; }
+.store-card-link {
+  background: #f1f5f9; color: #1b4332; padding: 8px 16px; border-radius: 50px;
+  font-size: 12px; font-weight: 600; text-decoration: none; text-transform: uppercase; transition: 0.2s;
+}
+.store-card-link:hover { background: #1b4332; color: #fff; }
+
+.store-empty { text-align: center; padding: 60px 20px; color: #718096; background: #fff; border-radius: 16px; border: 1px dashed #cbd5e1; }
+</style>
+
+<div class="container">
+  <div class="store-page-header">
+    <h1>All Collections</h1>
+    <p>Browse our complete catalog of meticulously crafted furniture.</p>
+  </div>
+
+  {% if product_details %}
+    <div class="store-prod-grid">
+  {% for product in product_details %}
+
+    <a href="{% url 'productdetails' id=product.ProductId name=product.ProductName|slugify %}" 
+       style="text-decoration: none; color: inherit;">
+
+      <div class="store-card">
+
+        <div class="store-card-img">
+          {% if product.ProductImage %}
+            <img src="{{ product.ProductImage.url }}" alt="{{ product.ProductName }}">
+          {% else %}
+            <img src="https://via.placeholder.com/400x400" alt="Placeholder">
+          {% endif %}
+        </div>
+
+        <div class="store-card-body">
+          <div class="store-card-title">{{ product.ProductName }}</div>
+          <div class="store-card-desc">
+            {{ product.ProductDescription|truncatechars:90 }}
+          </div>
+
+          <div class="store-card-bottom">
+            <div class="store-card-price">₹{{ product.ProductPrice }}</div>
+
+            <!-- optional: keep text but NOT as link -->
+            <span class="store-card-link">View Details</span>
+
+          </div>
+        </div>
+
+      </div>
+
+    </a>
+
+  {% endfor %}
+</div>
+  {% else %}
+    <div class="store-empty">
+      <h3>No products found.</h3>
+      <p>We are currently updating our inventory. Please check back shortly.</p>
+    </div>
+  {% endif %}
+</div>
+
+{% endblock %}

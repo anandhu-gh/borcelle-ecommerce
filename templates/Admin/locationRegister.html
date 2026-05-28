@@ -1,0 +1,127 @@
+{% extends "adminHeader.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+    .minimal-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+    }
+
+    .dropdown-box {
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+    }
+
+    .dropdown-label {
+        display: block;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        color: #64748b;
+        margin-bottom: 15px;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .minimal-select {
+        width: 100%;
+        padding: 16px 20px;
+        font-size: 18px;
+        font-family: 'Inter', sans-serif;
+        color: #1b4332;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        background-color: #ffffff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        appearance: none;
+        /* Custom arrow icon */
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%231b4332'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 20px center;
+        background-size: 20px;
+    }
+
+    .minimal-select:hover {
+        border-color: #1b4332;
+        box-shadow: 0 4px 12px rgba(27, 67, 50, 0.08);
+    }
+
+    .minimal-select:focus {
+        outline: none;
+        border-color: #1b4332;
+    }
+</style>
+
+<div class="minimal-wrapper">
+    <div class="dropdown-box">
+        <label class="dropdown-label">Select Working District</label>
+        
+        <!-- JavaScript onchange makes this act like a form without needing a button -->
+        <select class="minimal-select" id="districtid">
+            <option value="" disabled selected>Choose District...</option>
+            {% for dist in districts %}
+                <option value="{{ dist.district_id }}">{{ dist.name }}</option>
+            {% endfor %}
+        </select> <br><br>
+
+        <table class="table" border="1">
+            <thead>
+                <tr>
+                    <th>SL No</th>
+                    <th>Location Name</th>
+                </tr>
+            </thead>
+            <tbody id="locations">
+
+            </tbody>
+    </table>
+    </div>
+</div>
+
+<script src="{% static 'jquery-3.7.1.min.js' %}"></script>
+
+<script>
+$(document).ready(function() {
+
+  $('#districtid').change(function () {
+
+    var districtid = $(this).val();
+
+    $.ajax({
+      type: "POST",
+      url: '{% url "filllocation" %}',
+      data: {
+        did: districtid,
+        csrfmiddlewaretoken: '{{ csrf_token }}'
+      },
+
+      success: function (data) {
+
+        $('#locations').empty();
+        var s = 1;
+
+        $.each(data, function (key, val) {
+
+          var row = '<tr>' +
+                    '<td>' + s++ + '</td>' +
+                    '<td>' + val.location + '</td>' +
+                    '</tr>';
+
+          $('#locations').append(row);
+        });
+
+      }
+    });
+
+  });
+
+});
+</script>
+{% endblock %}
+
+

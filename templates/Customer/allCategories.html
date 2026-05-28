@@ -1,0 +1,138 @@
+{% extends "customerHeader.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+.cat-page-header { text-align: center; margin-bottom: 40px; }
+.cat-page-header h1 { font-family: 'Playfair Display', serif; font-size: 2.8rem; color: #1b4332; font-weight: 700; margin-bottom: 10px; }
+.cat-page-header p { color: #718096; }
+
+/* Sticky Nav */
+.cat-nav-wrapper {
+  position: sticky; top: 75px; z-index: 900;
+  background: rgba(248, 250, 252, 0.9); backdrop-filter: blur(10px);
+  padding: 15px 0; margin-bottom: 40px; border-bottom: 1px solid #e2e8f0;
+}
+
+.cat-nav {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 10px;
+  white-space: nowrap;
+  justify-content: center;
+}
+
+.cat-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: #fff;
+  border: 1px solid #e2e2e2;
+
+  text-decoration: none;
+  color: #333;
+  font-size: 13px;
+
+  flex-shrink: 0;
+}
+
+.cat-nav-link img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Sections */
+.cat-section { margin-bottom: 80px; }
+.cat-section-header {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 30px;
+}
+.cat-section-header h2 { font-family: 'Playfair Display', serif; font-size: 2rem; color: #1b4332; margin: 0; }
+.cat-section-header span { font-size: 13px; font-weight: 600; color: #a0aec0; letter-spacing: 1px; }
+
+/* Grid */
+.cat-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px;
+}
+.cat-item-card {
+  background: #fff; border-radius: 12px; border: 1px solid #edf2f7;
+  overflow: hidden; text-decoration: none; color: inherit;
+  transition: transform 0.3s, box-shadow 0.3s; display: block;
+}
+.cat-item-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.06); }
+.cat-item-img { aspect-ratio: 1/1; background: #f1f5f9; overflow: hidden; }
+.cat-item-img img { width: 100%; height: 100%; object-fit: cover; }
+.cat-item-body { padding: 16px; }
+.cat-item-body h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; color: #2d3748; }
+.cat-item-body .price { font-weight: 700; color: #1b4332; font-size: 14px; }
+.cat-empty { grid-column: 1 / -1; padding: 40px; text-align: center; background: #fff; border-radius: 12px; border: 1px dashed #cbd5e1; color: #718096; }
+</style>
+
+<div class="container">
+  <div class="cat-page-header">
+    <h1>Our Departments</h1>
+    <p>Organized collections to easily find exactly what you're looking for.</p>
+  </div>
+</div>
+
+<div class="cat-nav-wrapper">
+  <div class="container">
+ <div class="cat-nav">
+  {% for category in categories %}
+    <!-- We pass both the ID and the slugified Name to the URL -->
+    <a href="{% url 'categoryview' category.category_id category.category_name|slugify %}" class="cat-nav-link">
+
+      {% if category.category_image %}
+        <img src="{{ category.category_image.url }}" alt="{{ category.category_name }}">
+      {% else %}
+        <img src="https://via.placeholder.com/40" alt="placeholder">
+      {% endif %}
+
+      <span class="cat-name">{{ category.category_name }}</span>
+
+    </a>
+  {% endfor %}
+</div>
+  </div>
+</div>
+
+<div class="container">
+  {% for category in categories %}
+  <div class="cat-section" id="cat-{{ forloop.counter }}">
+    <div class="cat-section-header">
+      <h2>{{ category.category_name }}</h2>
+      <span>{{ category.products.count }} PRODUCTS</span>
+    </div>
+    
+    <div class="cat-grid">
+      {% for product in category.products.all %}
+      <a href="{% url 'productdetails' id=product.ProductId name=product.ProductName %}" class="cat-item-card">
+        <div class="cat-item-img">
+          {% if product.ProductImage %}
+            <img src="{{ product.ProductImage.url }}" alt="{{ product.ProductName }}">
+          {% else %}
+            <img src="https://via.placeholder.com/400?text=No+Image">
+          {% endif %}
+        </div>
+        <div class="cat-item-body">
+          <h4>{{ product.ProductName }}</h4>
+          <div class="price">₹{{ product.ProductPrice }}</div>
+        </div>
+      </a>
+      {% empty %}
+      <div class="cat-empty">
+        <p class="mb-0">New items arriving soon to this category.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,222 @@
+{% extends "deliveryboyHeaderFooter.html" %}
+{% block content %}
+
+<style>
+
+.edit-card{
+    background:#fff;
+    border-radius:22px;
+    padding:30px;
+    border:1px solid #e5e7eb;
+    max-width:900px;
+}
+
+.top h2{
+    margin:0;
+}
+
+.top p{
+    margin-top:6px;
+    color:#64748b;
+}
+
+/* FORM */
+.form-grid{
+    margin-top:24px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:18px;
+}
+
+.form-box{
+    display:flex;
+    flex-direction:column;
+}
+
+.form-box label{
+    margin-bottom:8px;
+    font-size:14px;
+    font-weight:500;
+    color:#475569;
+}
+
+.form-box input,
+.form-box textarea{
+    border:1px solid #dbe2ea;
+    background:#f8fafc;
+    border-radius:14px;
+    padding:13px 14px;
+    outline:none;
+    transition:0.2s;
+}
+
+.form-box textarea{
+    resize:none;
+    height:110px;
+}
+
+.form-box input:focus,
+.form-box textarea:focus{
+    border-color:#2563eb;
+    background:#fff;
+}
+
+/* BUTTON */
+.btn-save{
+    margin-top:24px;
+    border:none;
+    background:#2563eb;
+    color:#fff;
+    padding:13px 22px;
+    border-radius:14px;
+    font-weight:600;
+}
+
+.btn-save:hover{
+    background:#1d4ed8;
+}
+
+/* NOTE */
+.note{
+    margin-top:18px;
+    background:#eff6ff;
+    color:#2563eb;
+    padding:14px 16px;
+    border-radius:14px;
+    font-size:14px;
+}
+
+</style>
+
+<div class="edit-card">
+
+    <div class="top">
+
+        <h2>
+            Edit Profile
+        </h2>
+
+        <p>
+            Update account details and delivery information.
+        </p>
+
+    </div>
+
+    <div class="note">
+
+        <i class="bi bi-info-circle"></i>
+        Username must be unique and password should contain minimum 3 characters.
+
+    </div>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="form-grid">
+
+            <!-- NAME -->
+            <div class="form-box">
+
+                <label>Full Name</label>
+
+                <input 
+                    type="text"
+                    name="name"
+                    value="{{deliveryboy.name}}"
+                    required
+                    pattern="[A-Za-z ]{3,50}"
+                    title="Enter valid name"
+                >
+
+            </div>
+
+            <!-- USERNAME -->
+            <div class="form-box">
+
+                <label>Username</label>
+
+                <input 
+                    type="text"
+                    name="username"
+                    value="{{deliveryboy.username}}"
+                    required
+                    pattern="[A-Za-z0-9_]{4,20}"
+                    title="Username must be 4 to 20 characters"
+                >
+
+            </div>
+
+            <!-- EMAIL -->
+            <div class="form-box">
+
+                <label>Email Address</label>
+
+                <input 
+                    type="email"
+                    name="email"
+                    value="{{deliveryboy.email}}"
+                    required
+                >
+
+            </div>
+
+            <!-- PHONE -->
+            <div class="form-box">
+
+                <label>Phone Number</label>
+
+                <input 
+                    type="text"
+                    name="phone"
+                    value="{{deliveryboy.phone}}"
+                    required
+                    pattern="[0-9]{10}"
+                    title="Enter valid 10 digit phone number"
+                >
+
+            </div>
+
+            <!-- ADDRESS -->
+            <div class="form-box" style="grid-column:1/-1;">
+
+                <label>Address</label>
+
+                <textarea 
+                    name="address"
+                    required
+                    minlength="5"
+                >{{deliveryboy.address}}</textarea>
+
+            </div>
+
+            <!-- NEW PASSWORD -->
+            <div class="form-box">
+
+                <label>New Password</label>
+
+                <input 
+                    type="password"
+                    name="new_password"
+                    required
+                    value="{{deliveryboy.password}}"
+                    pattern=".{3,6}"
+                    title="Password must contain minimum 3 characters"
+                >
+
+            </div>
+
+        </div>
+
+        <button type="submit" class="btn-save">
+
+            <i class="bi bi-check-circle"></i>
+            Save Changes
+
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

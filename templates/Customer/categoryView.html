@@ -1,0 +1,230 @@
+{% extends "customerHeader.html" %}
+{% block content %}
+
+<style>
+    :root {
+        --brand-dark: #1b4332;
+        --brand-accent: #74c69d;
+        --text-main: #2d3748;
+        --text-muted: #718096;
+    }
+
+    .cat-hero {
+        position: relative;
+        height: 400px;
+        width: 100%;
+        border-radius: 30px;
+        overflow: hidden;
+        margin-bottom: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #000;
+    }
+
+    .cat-hero-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        /* FIX: Changed to contain or center-aligned cover to prevent head-cropping */
+        object-fit: cover;
+        object-position: center;
+        opacity: 0.6;
+    }
+
+    .cat-hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        color: #fff;
+        max-width: 800px;
+    }
+
+    .cat-hero-content h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 80px;
+        font-weight: 900;
+        font-style: italic;
+        margin-bottom: 10px;
+        letter-spacing: -2px;
+    }
+
+    .cat-hero-content p {
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        font-weight: 300;
+    }
+
+    .product-card-detailed {
+        background: #fff;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid rgba(0,0,0,0.05);
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-card-detailed:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        border-color: var(--brand-accent);
+    }
+
+    .prod-img-wrap {
+        /* FIX: Increased height or used aspect-ratio to ensure furniture fits */
+        height: 350px; 
+        position: relative;
+        overflow: hidden;
+        background: #f8fafc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .prod-img-wrap img {
+        width: 100%;
+        height: 100%;
+        /* FIX: 'contain' ensures the whole furniture is visible. 
+           Use 'cover' only if your images are all the same high-resolution aspect ratio. */
+        object-fit: contain; 
+        padding: 10px; /* Gives furniture breathing room */
+    }
+
+    .prod-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(5px);
+        padding: 6px 18px;
+        border-radius: 50px;
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--brand-dark);
+        text-transform: uppercase;
+        z-index: 2;
+    }
+
+    .prod-info-detailed {
+        padding: 25px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .prod-meta {
+        font-size: 10px;
+        color: var(--brand-accent);
+        text-transform: uppercase;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        margin-bottom: 12px;
+    }
+
+    .prod-info-detailed h3 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        font-size: 24px;
+        margin-bottom: 12px;
+        color: var(--brand-dark);
+        text-decoration: none !important;
+    }
+
+    .prod-description {
+        font-size: 14px;
+        color: var(--text-muted);
+        line-height: 1.6;
+        margin-bottom: 20px;
+        /* FIX: Ensures description doesn't push the footer out of view */
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .prod-footer {
+        margin-top: auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 20px;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .prod-price {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--brand-dark);
+    }
+
+    .view-btn {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: var(--brand-dark);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.3s;
+    }
+
+    .product-card-detailed:hover .view-btn {
+        background: var(--brand-accent);
+        transform: rotate(-45deg);
+    }
+</style>
+
+<div class="container py-4">
+    <section class="cat-hero">
+        {% if category.category_image %}
+            <img src="{{ category.category_image.url }}" class="cat-hero-img" alt="{{ category.category_name }}">
+        {% endif %}
+        <div class="cat-hero-content">
+            <h1>{{ category.category_name }}</h1>
+            <p>Refined craftsmanship meets timeless design in our exclusive collections.</p>
+        </div>
+    </section>
+
+    <div class="row g-4"> <!-- FIX: Use g-4 for better spacing -->
+        {% for product in products %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <a href="{% url 'productdetails' id=product.ProductId name=product.ProductName %}" class="text-decoration-none">
+                <div class="product-card-detailed">
+                    <div class="prod-img-wrap">
+                        {% if product.ProductImage %}
+                            <img src="{{ product.ProductImage.url }}" alt="{{ product.ProductName }}">
+                        {% endif %}
+                        <span class="prod-badge">New Edition</span>
+                    </div>
+                    
+                    <div class="prod-info-detailed">
+                        <span class="prod-meta">COLLECTION 2026</span>
+                        <h3>{{ product.ProductName }}</h3>
+                        <div class="prod-description">
+                            {{ product.ProductDescription|default:"A masterfully crafted piece designed for modern elegance and lasting comfort." }}
+                        </div>
+                        
+                        <div class="prod-footer">
+                            <span class="prod-price">₹{{ product.ProductPrice }}</span>
+                            <div class="view-btn"><i class="fa-solid fa-arrow-right"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <h2 class="text-muted" style="font-family: 'Playfair Display', serif;">No items available in this category.</h2>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

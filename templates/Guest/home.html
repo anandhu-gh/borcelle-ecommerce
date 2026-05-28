@@ -1,0 +1,194 @@
+{% extends "guestHeaderFooter.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+  /* HERO CAROUSEL */
+  .guest-hero-carousel .carousel-item {
+    height: 80vh;
+    min-height: 500px;
+  }
+  .guest-hero-carousel .carousel-item img {
+    height: 100%; width: 100%; object-fit: cover;
+  }
+  .guest-hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 100%);
+    display: flex; align-items: center; justify-content: flex-start;
+    padding-left: 10%;
+  }
+  .guest-hero-content {
+    max-width: 600px; color: #fff;
+  }
+  .guest-hero-content h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 4.5rem; font-weight: 700; line-height: 1.1; margin-bottom: 20px;
+  }
+  .guest-hero-content p {
+    font-size: 1.2rem; font-weight: 300; opacity: 0.9; margin-bottom: 30px;
+  }
+  .btn-hero {
+    display: inline-block; padding: 14px 36px;
+    background: #d8f3dc; color: #1b4332;
+    border-radius: 50px; font-weight: 600; text-decoration: none;
+    letter-spacing: 1px; transition: all 0.3s;
+  }
+  .btn-hero:hover { background: #fff; transform: translateY(-3px); }
+
+  /* SECTION STYLING */
+  .home-section { padding: 80px 0; }
+  .section-title {
+    font-family: 'Playfair Display', serif; font-size: 2.5rem;
+    text-align: center; color: #1b4332; margin-bottom: 50px; font-weight: 600;
+  }
+
+  /* CATEGORY CARDS */
+  .cat-card {
+    position: relative; border-radius: 16px; overflow: hidden;
+    height: 350px; display: block; text-decoration: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08); transition: transform 0.4s;
+  }
+  .cat-card:hover { transform: translateY(-8px); }
+  .cat-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s; }
+  .cat-card:hover img { transform: scale(1.05); }
+  .cat-card-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%);
+    display: flex; align-items: flex-end; padding: 24px;
+  }
+  .cat-card-overlay h3 { color: #fff; font-family: 'Playfair Display', serif; font-size: 1.8rem; margin: 0; }
+
+  /* PRODUCT CARDS */
+  .feat-product-card {
+    background: #fff; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #f1f5f9;
+  }
+  .feat-product-img { height: 260px; overflow: hidden; }
+  .feat-product-img img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+  .feat-product-card:hover .feat-product-img img { transform: scale(1.05); }
+  .feat-product-info { padding: 20px; text-align: center; }
+  .feat-product-info h4 { font-size: 1.1rem; font-weight: 600; color: #2d3748; margin-bottom: 8px; }
+  .feat-product-info p { font-size: 0.9rem; color: #718096; margin-bottom: 12px; }
+  .feat-product-info span { font-weight: 700; color: #1b4332; font-size: 1.1rem; }
+
+  /* CTA BANNER */
+  .cta-banner {
+    background: linear-gradient(135deg, #1b4332 0%, #0f2c20 100%);
+    padding: 80px 20px; text-align: center; color: #fff; border-radius: 20px;
+    margin-bottom: 80px; box-shadow: 0 20px 40px rgba(27,67,50,0.2);
+  }
+  .cta-banner h2 { font-family: 'Playfair Display', serif; font-size: 3rem; margin-bottom: 20px; }
+  .cta-banner a {
+    display: inline-block; margin-top: 20px; padding: 14px 40px;
+    border-radius: 50px; background: #d8f3dc; color: #1b4332;
+    font-weight: 600; text-decoration: none; transition: 0.3s;
+  }
+  .cta-banner a:hover { background: #fff; }
+</style>
+
+<div id="guestHeroCarousel" class="carousel slide carousel-fade guest-hero-carousel" data-bs-ride="carousel">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=1974" alt="Hero 1">
+      <div class="guest-hero-overlay">
+        <div class="guest-hero-content">
+          <h1>Timeless Elegance</h1>
+          <p>Upgrade your home with stylish, comfortable, and handcrafted furniture designed for modern living.</p>
+          <a href="{% url 'login' %}" class="btn-hero">Shop Collection</a>
+        </div>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000" alt="Hero 2">
+      <div class="guest-hero-overlay">
+        <div class="guest-hero-content">
+          <h1>Minimalist Comfort</h1>
+          <p>Discover pieces that bring warmth, clarity, and peace to your everyday spaces.</p>
+          <a href="{% url 'login' %}" class="btn-hero">Explore Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#guestHeroCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#guestHeroCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+  </button>
+</div>
+
+<div class="container home-section">
+  <h2 class="section-title">Shop by Category</h2>
+  <div class="row g-4">
+    <div class="col-md-4">
+      <a href="{% url 'login' %}" class="cat-card">
+        <img src="https://images.unsplash.com/photo-1630585308572-f53438fc684f?q=80&w=821">
+        <div class="cat-card-overlay"><h3>Sofas</h3></div>
+      </a>
+    </div>
+    <div class="col-md-4">
+      <a href="{% url 'login' %}" class="cat-card">
+        <img src="https://plus.unsplash.com/premium_photo-1681022527718-81786d7873bd?q=80&w=715">
+        <div class="cat-card-overlay"><h3>Chairs</h3></div>
+      </a>
+    </div>
+    <div class="col-md-4">
+      <a href="{% url 'login' %}" class="cat-card">
+        <img src="https://images.unsplash.com/photo-1604578762246-41134e37f9cc?q=80&w=1935">
+        <div class="cat-card-overlay"><h3>Tables</h3></div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="container home-section pt-0">
+  <h2 class="section-title">Featured Creations</h2>
+  <div class="row g-4 justify-content-center">
+    <div class="col-lg-4 col-md-6">
+      <div class="feat-product-card">
+        <div class="feat-product-img">
+          <img src="https://www.royalzig.com/uploads/cache/cache-classical-luxury-style-handcrafted-french-sofa-set-chennai-(1).jpg">
+        </div>
+        <div class="feat-product-info">
+          <h4>Luxury French Sofa</h4>
+          <p>Comfortable & stylish premium fabric</p>
+          <span>₹25,000</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-6">
+      <div class="feat-product-card">
+        <div class="feat-product-img">
+          <img src="https://media-uk.landmarkshops.in/cdn-cgi/image/h=750,w=750,q=85,fit=cover/homecentre/1000012428496-1000012428495_01-2100.jpg">
+        </div>
+        <div class="feat-product-info">
+          <h4>Minimalist Wooden Chair</h4>
+          <p>Sleek design for modern dining</p>
+          <span>₹5,500</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-6">
+      <div class="feat-product-card">
+        <div class="feat-product-img">
+          <img src="https://www.rajwadafurnish.com/cdn/shop/files/devanti-traditional-solid-sheesham-wood-four-seater-dining-table-set-india.webp?v=1777008812&width=1200">
+        </div>
+        <div class="feat-product-info">
+          <h4>Sheesham Dining Table</h4>
+          <p>Solid wood with premium finish</p>
+          <span>₹18,000</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="cta-banner">
+    <h2>Bring Comfort to Your Home</h2>
+    <p class="lead mb-0 opacity-75">Discover premium furniture crafted for unparalleled elegance and durability.</p>
+    <a href="{% url 'login' %}">Start Decorating</a>
+  </div>
+</div>
+
+{% endblock %}

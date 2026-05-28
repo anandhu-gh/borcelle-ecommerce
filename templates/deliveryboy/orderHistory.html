@@ -1,0 +1,47 @@
+{% extends "deliveryboyHeaderFooter.html" %}
+{% block content %}
+
+<h3 class="mb-4">Delivered Order History</h3>
+
+<div class="row">
+
+  {% for o in orders %}
+  <div class="col-md-4 mb-3">
+
+    <div class="card shadow-sm border-0">
+
+      <div class="card-body">
+
+        <h5>Order #{{ o.order_id }}</h5>
+
+        <p class="mb-1"><b>Amount:</b> ₹{{ o.total_amount }}</p>
+
+        <p class="mb-1"><b>Status:</b> 
+          <span class="text-success">Delivered</span>
+        </p>
+
+        <p class="mb-2">
+          <b>Products:</b><br>
+          {% for item in o.orderitem_set.all %}
+            • {{ item.product.ProductName }} (x{{ item.quantity }})<br>
+          {% endfor %}
+        </p>
+
+        <small class="text-muted">
+          {{ o.order_date }}
+        </small>
+
+      </div>
+
+    </div>
+
+  </div>
+  {% empty %}
+
+    <p>No delivered orders yet.</p>
+
+  {% endfor %}
+
+</div>
+
+{% endblock %}

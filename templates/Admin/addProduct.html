@@ -1,0 +1,108 @@
+{% extends "adminHeader.html" %}
+{% block content %}
+
+<style>
+.admin-form-page { animation: fadeIn 0.4s ease; max-width: 700px; margin: 0 auto; }
+.form-header { margin-bottom: 24px; }
+.form-header h2 { font-weight: 700; color: #111827; font-size: 1.8rem; margin-bottom: 8px; }
+.form-header p { color: #6b7280; font-size: 14px; margin: 0; }
+
+.admin-form-card {
+  background: #ffffff; border-radius: 16px; padding: 32px;
+  border: 1px solid #e5e7eb; box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+
+.input-group { margin-bottom: 20px; }
+.input-group label { display: block; font-weight: 600; color: #374151; font-size: 14px; margin-bottom: 8px; }
+.input-group input[type="text"], 
+.input-group input[type="number"], 
+.input-group textarea, 
+.input-group select {
+  width: 100%; padding: 12px 16px; border-radius: 10px;
+  border: 1px solid #d1d5db; background: #f9fafb; font-family: inherit; font-size: 14px;
+  color: #111827; transition: all 0.2s; outline: none;
+}
+.input-group input:focus, .input-group textarea:focus, .input-group select:focus {
+  border-color: #1b4332; background: #ffffff; box-shadow: 0 0 0 4px rgba(27,67,50,0.1);
+}
+.input-group textarea { resize: vertical; min-height: 120px; }
+
+/* Custom File Input Styling */
+.file-input-wrapper {
+  border: 2px dashed #d1d5db; border-radius: 10px; padding: 20px;
+  text-align: center; background: #f9fafb; transition: 0.2s; cursor: pointer;
+}
+.file-input-wrapper:hover { border-color: #1b4332; background: #f0fdf4; }
+.file-input-wrapper input[type="file"] { width: 100%; cursor: pointer; color: #6b7280; font-size: 14px; }
+
+.form-helper { font-size: 12px; color: #9ca3af; margin-top: 6px; }
+
+.btn-submit {
+  width: 100%; padding: 14px; background: #1b4332; color: #ffffff;
+  border: none; border-radius: 10px; font-weight: 600; font-size: 15px;
+  cursor: pointer; transition: all 0.2s; margin-top: 10px;
+}
+.btn-submit:hover { background: #0f2c20; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(27,67,50,0.2); }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+
+<div class="admin-form-page">
+  <div class="form-header">
+    <h2>Add New Product</h2>
+    <p>Fill out the details below to add a new item to your store's catalog.</p>
+  </div>
+
+  <div class="admin-form-card">
+    <form method="POST" action="{% url 'addproduct' %}" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="input-group">
+        <label>Product Name</label>
+        <input type="text" name="name" placeholder="e.g. Minimalist Oak Table" required>
+      </div>
+
+      <div class="input-group">
+        <label>Description</label>
+        <textarea name="description" placeholder="Provide a detailed description of the product..." required></textarea>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="input-group">
+          <label>Price (₹)</label>
+          <input type="number" step="0.01" name="price" placeholder="0.00" required>
+        </div>
+        <div class="input-group">
+          <label>Stock Quantity</label>
+          <input type="number" name="stock" placeholder="e.g. 50" required>
+        </div>
+
+
+        <div class="input-group">
+          <label>Category</label>
+          <select name="category" required>
+            <option value="" disabled selected>Select Category</option>
+            {% for c in categories %}
+              <option value="{{ c.category_id }}">{{ c.category_name }}</option>
+            {% empty %}
+              <option disabled>No categories available</option>
+            {% endfor %}
+          </select>
+          <div class="form-helper">Categorizing helps customers filter products.</div>
+        </div>
+        
+      </div>
+
+      <div class="input-group">
+        <label>Product Image</label>
+        <div class="file-input-wrapper">
+          <input type="file" name="image" accept="image/*" required>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit">Add Product</button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

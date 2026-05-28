@@ -1,0 +1,201 @@
+{% extends "deliveryboyHeaderFooter.html" %}
+{% block content %}
+
+<style>
+
+.title{
+    font-size:22px;
+    font-weight:700;
+    margin-bottom:18px;
+    color:#111827;
+}
+
+/* CONTAINER */
+.box{
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    overflow:hidden;
+}
+
+/* TABLE */
+table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0;
+    font-size:14px;
+}
+
+/* HEADER */
+th{
+    text-align:left;
+    padding:14px 16px;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.6px;
+    color:#6b7280;
+    background:#f8fafc;
+    border-bottom:1px solid #e5e7eb;
+}
+
+/* ROW */
+td{
+    padding:18px 16px;
+    border-bottom:1px solid #f1f5f9;
+    vertical-align:middle;
+    color:#111827;
+}
+
+/* ORDER ID */
+.id{
+    font-weight:700;
+    color:#111827;
+}
+
+/* CUSTOMER */
+.customer{
+    font-weight:600;
+    font-size:15px;
+}
+
+.small{
+    font-size:12px;
+    color:#6b7280;
+    margin-top:3px;
+}
+
+/* ADDRESS */
+.address{
+    font-size:13px;
+    color:#374151;
+    line-height:1.4;
+}
+
+/* PRODUCTS */
+.products{
+    font-size:13px;
+    color:#374151;
+    line-height:1.5;
+}
+
+/* STATUS */
+.status{
+    font-size:13px;
+    font-weight:600;
+}
+
+.pending{
+    color:#b45309;
+}
+
+.delivered{
+    color:#16a34a;
+}
+
+/* ACTION BUTTON */
+.btnx{
+    display:inline-block;
+    padding:6px 12px;
+    font-size:13px;
+    border-radius:8px;
+    border:1px solid #111827;
+    text-decoration:none;
+    color:#111827;
+    white-space:nowrap;
+    transition:0.2s;
+}
+
+.btnx:hover{
+    background:#111827;
+    color:#fff;
+}
+
+/* DONE */
+.done{
+    font-size:13px;
+    font-weight:600;
+    color:#16a34a;
+}
+
+/* HOVER ROW (VERY SUBTLE) */
+tr:hover td{
+    background:#fafafa;
+}
+
+</style>
+
+<div class="title">Paid Orders</div>
+
+<div class="box">
+
+<table>
+
+<tr>
+    <th>Order</th>
+    <th>Customer</th>
+    <th>Address</th>
+    <th>Products</th>
+    <th>Amount</th>
+    <th>Status</th>
+    <th>Action</th>
+</tr>
+
+{% for o in paid_orders %}
+
+<tr>
+
+    <!-- ORDER -->
+    <td class="id">#{{ o.order_id }}</td>
+
+    <!-- CUSTOMER -->
+    <td>
+        <div class="customer">{{ o.customer.name }}</div>
+        <div class="small">{{ o.customer.phone }}</div>
+    </td>
+
+    <!-- ADDRESS -->
+    <td class="address">
+        {{ o.customer.address }}
+    </td>
+
+    <!-- PRODUCTS -->
+    <td class="products">
+        {% for item in o.orderitem_set.all %}
+            {{ item.product.ProductName }} × {{ item.quantity }}<br>
+        {% endfor %}
+    </td>
+
+    <!-- AMOUNT -->
+    <td>
+        ₹{{ o.total_amount }}
+    </td>
+
+    <!-- STATUS -->
+    <td>
+        {% if o.status == "Delivered" %}
+            <span class="status delivered">Delivered</span>
+        {% else %}
+            <span class="status pending">{{ o.status }}</span>
+        {% endif %}
+    </td>
+
+    <!-- ACTION -->
+    <td>
+        {% if o.status != "Delivered" %}
+            <a href="{% url 'markdelivered' o.order_id %}" class="btnx">
+                Mark Delivered
+            </a>
+        {% else %}
+            <span class="done">Completed</span>
+        {% endif %}
+    </td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+{% endblock %}

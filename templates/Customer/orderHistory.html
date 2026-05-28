@@ -1,0 +1,202 @@
+{% extends "customerHeader.html" %}
+{% block content %}
+
+<style>
+    .orders-wrapper {
+        max-width: 1050px; 
+        margin: 40px 0 60px 40px; 
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        color: #0f172a;
+    }
+    .page-title { 
+        font-size: 1.85rem; 
+        font-weight: 800; 
+        margin-bottom: 32px; 
+        letter-spacing: -0.025em;
+    }
+    
+    .order-card {
+        border: 1px solid #cbd5e1; 
+        border-radius: 12px;
+        margin-bottom: 28px;
+        background: #fff;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+    }
+    
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 18px 24px;
+        background: #f1f5f9; 
+        border-bottom: 1px solid #cbd5e1;
+        border-top-left-radius: 11px;
+        border-top-right-radius: 11px;
+    }
+    .order-id { 
+        font-weight: 700; 
+        font-size: 16px; 
+        color: #0f172a;
+    }
+    .text-muted { color: #475569; font-size: 13px; } 
+    .address-highlight { font-weight: 500; color: #334155; }
+    
+    .status-tag {
+        font-size: 11px;
+        font-weight: 700; 
+        padding: 5px 12px;
+        border-radius: 6px;
+        background: #0f172a;
+        color: #ffffff;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+    
+    .table-header {
+        display: grid;
+        grid-template-columns: 2.5fr 1fr 1fr;
+        padding: 14px 24px;
+        font-size: 11px;
+        font-weight: 800; 
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #475569;
+        border-bottom: 1px solid #e2e8f0;
+        background: #fafafa;
+    }
+    
+    .item-row {
+        display: grid;
+        grid-template-columns: 2.5fr 1fr 1fr;
+        align-items: center;
+        padding: 18px 24px;
+        font-size: 15px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .item-row:last-of-type { border-bottom: none; }
+    
+    .product-title { font-weight: 600; color: #0f172a; }
+    .qty-display { font-weight: 700; color: #334155; }
+    .price-col { font-weight: 700; font-size: 16px; color: #0f172a; }
+
+    .feedback-box {
+        padding: 24px;
+        background: #f8fafc;
+        border-top: 1px solid #cbd5e1;
+        border-bottom-left-radius: 11px;
+        border-bottom-right-radius: 11px;
+    }
+    .feedback-title {
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: #334155;
+        margin-bottom: 18px;
+        letter-spacing: 0.06em;
+    }
+    .f-row {
+        display: grid;
+        grid-template-columns: 2.5fr 1.2fr 2.3fr;
+        gap: 16px;
+        align-items: center;
+        margin-bottom: 14px;
+    }
+    .f-row:last-of-type { margin-bottom: 20px; }
+    .f-row label { font-size: 14px; font-weight: 600; color: #1e293b; }
+    
+    select, input, .btn {
+        padding: 9px 12px;
+        border: 1px solid #94a3b8; 
+        border-radius: 6px;
+        font-size: 14px;
+        background: #fff;
+        outline: none;
+        color: #0f172a;
+    }
+    select { font-weight: 600; cursor: pointer; }
+    input { width: 100%; }
+    input::placeholder { color: #94a3b8; }
+    
+    .btn {
+        background: #0f172a;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        font-weight: 700; 
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 0.05em;
+        padding: 12px 24px;
+        transition: background 0.1s ease;
+    }
+    .btn:hover { background: #1e293b; }
+</style>
+
+<div class="orders-wrapper">
+    <h2 class="page-title">My Orders</h2>
+
+    {% for order in orders %}
+    <div class="order-card">
+        
+        <!-- HEADER -->
+        <div class="order-header">
+            <div>
+                <div class="order-id">Order #{{ order.order_id }}</div>
+                <div class="text-muted">Ship to: <span class="address-highlight">{{ order.customer.address }}</span></div>
+            </div>
+            <div class="status-tag">{{ order.status }}</div>
+        </div>
+
+        <!-- ITEMS HEADERS -->
+        <div class="table-header">
+            <div>Product Details</div>
+            <div>Quantity</div>
+            <div>Total Price</div>
+        </div>
+
+        <!-- ITEMS LIST -->
+        {% for item in order.orderitem_set.all %}
+        <div class="item-row">
+            <div class="product-title">{{ item.product.ProductName }}</div>
+            <div class="qty-display">{{ item.quantity }}</div>
+            <div class="price-col">₹{{ item.price }}</div>
+        </div>
+        {% endfor %}
+
+        <!-- CONDITIONAL REVIEW AREA (ONLY RENDERED ONCE THE STATUS READS DELIVERED) -->
+{% if order.status == "Delivered" %}
+<div class="feedback-box">
+    <div class="feedback-title">Rate Purchased Items <span style="color: #64748b; font-size:11px;">(Optional)</span></div>
+    <form method="POST" action="{% url 'submitfeedback' id=order.order_id %}">
+        {% csrf_token %}
+        
+        {% for item in order.orderitem_set.all %}
+        <div class="f-row">
+            <label>{{ item.product.ProductName }}</label>
+
+            <!-- REMOVED REQUIRED ATTRIBUTE -->
+            <select name="rating_{{ item.order_item_id }}">
+                <option value="" disabled selected>Select Rating</option>
+                <option value="5">5 ★★★★★</option>
+                <option value="4">4 ★★★★</option>
+                <option value="3">3 ★★★</option>
+                <option value="2">2 ★★</option>
+                <option value="1">1 ★</option>
+            </select>
+
+            <!-- REMOVED REQUIRED ATTRIBUTE -->
+            <input type="text" name="message_{{ item.order_item_id }}" placeholder="Write your review (optional)...">
+        </div>
+        {% endfor %}
+        
+        <button type="submit" class="btn">Submit Review</button>
+    </form>
+</div>
+{% endif %}
+    </div>
+    {% empty %}
+    <p class="text-muted" style="font-weight: 500;">You haven't placed any orders yet.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

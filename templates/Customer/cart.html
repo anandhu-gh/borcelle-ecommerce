@@ -1,0 +1,189 @@
+{% extends "customerHeader.html" %}
+{% block content %}
+
+<style>
+:root {
+    --brand-dark: #1b4332;
+    --brand-light: #f8fafc;
+    --border-color: #e2e8f0;
+    --text-main: #2d3748;
+}
+
+/* wrapper */
+.cart-wrapper {
+    max-width: 1200px;
+    margin: 60px auto;
+    padding: 0 20px;
+    font-family: 'Inter', sans-serif;
+}
+
+/* title */
+.cart-header {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--brand-dark);
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 20px;
+}
+
+/* item */
+.cart-item {
+    display: flex;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.cart-item-img {
+    width: 130px;
+    height: 130px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.cart-item-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cart-item-info h3 {
+    margin: 5px 0;
+}
+
+.category-tag {
+    font-size: 12px;
+    color: #74c69d;
+    font-weight: bold;
+}
+
+/* summary */
+.summary-card {
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    position: sticky;
+    top: 20px;
+}
+
+.summary-row,
+.summary-total {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.summary-total {
+    font-weight: bold;
+    font-size: 18px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+
+/* button */
+.checkout-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 14px;
+    background: #1b4332;
+    color: white;
+    border-radius: 30px;
+    text-decoration: none;
+}
+</style>
+
+
+<div class="cart-wrapper">
+    <h1 class="cart-header">Shopping Cart</h1>
+
+    <div class="row">
+
+        <!-- LEFT SIDE -->
+        <div class="col-lg-8">
+
+            {% if cart_items %}
+
+                {% for items in cart_items %}
+                <div class="cart-item">
+
+                    <a href="{% url 'productdetails' id=items.product.ProductId name=items.product.ProductName|slugify %}">
+                        <div class="cart-item-img">
+                            <img src="{{ items.product.ProductImage.url }}">
+                        </div>
+                    </a>
+
+                    <div class="cart-item-info">
+                        <span class="category-tag">
+                            {{ items.product.category.category_name }}
+                        </span>
+
+                        <h3>{{ items.product.ProductName }}</h3>
+
+                        <p>Quantity: {{ items.quantity }}</p>
+
+                        <span><b>₹{{ items.item_total }}</b></span>
+
+<br>
+
+<a href="{% url 'removecartitem' items.cart_id %}" 
+   style="color:red; font-size:15px; text-decoration:none;">
+   Remove
+</a>
+                    </div>
+
+                </div>
+                {% endfor %}
+
+            {% else %}
+
+                <div style="text-align:center; margin-top:80px;">
+                    <h2>Your cart is empty 🛒</h2>
+
+                    <a href="{% url 'productsview' %}" class="checkout-btn">
+                        Continue Shopping
+                    </a>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- RIGHT SIDE -->
+        <div class="col-lg-4">
+
+            {% if cart_items %}
+            <div class="summary-card">
+
+                <h3>Order Summary</h3>
+
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>₹{{ total }}</span>
+                </div>
+
+                <div class="summary-row">
+                    <span>Shipping</span>
+                    <span>Free</span>
+                </div>
+
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span>₹{{ total }}</span>
+                </div>
+
+                <a href="{% url 'checkout' %}" class="checkout-btn">
+                    Proceed to Checkout
+                </a>
+
+            </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,214 @@
+{% extends "deliveryboyHeaderFooter.html" %}
+{% block content %}
+
+<style>
+
+.profile-card{
+    background:#fff;
+    border-radius:22px;
+    padding:28px;
+    border:1px solid #e5e7eb;
+}
+
+/* TOP */
+.profile-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:20px;
+}
+
+.profile-user{
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.profile-icon{
+    width:85px;
+    height:85px;
+    border-radius:20px;
+    background:#eff6ff;
+    color:#2563eb;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:38px;
+}
+
+.profile-user h2{
+    margin:0;
+}
+
+.profile-user p{
+    margin-top:6px;
+    color:#64748b;
+}
+
+.edit-btn{
+    background:#2563eb;
+    color:#fff;
+    text-decoration:none;
+    padding:11px 18px;
+    border-radius:12px;
+}
+
+.edit-btn:hover{
+    background:#1d4ed8;
+    color:#fff;
+}
+
+/* DETAILS */
+.details{
+    margin-top:28px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:18px;
+}
+
+.detail-box{
+    background:#f8fafc;
+    border-radius:18px;
+    padding:20px;
+    border:1px solid #e2e8f0;
+}
+
+.detail-box i{
+    font-size:22px;
+    color:#2563eb;
+}
+
+.detail-box small{
+    display:block;
+    margin-top:14px;
+    color:#64748b;
+    text-transform:uppercase;
+}
+
+.detail-box h6{
+    margin-top:5px;
+    margin-bottom:0;
+    font-size:16px;
+}
+
+/* STATUS */
+.status-box{
+    margin-top:24px;
+    background:#eff6ff;
+    border-radius:16px;
+    padding:16px 18px;
+    color:#2563eb;
+    font-size:14px;
+}
+
+</style>
+
+<div class="profile-card">
+
+    <!-- TOP -->
+    <div class="profile-top">
+
+        <div class="profile-user">
+
+            <div class="profile-icon">
+                <i class="bi bi-file-earmark-person-fill"></i>
+            </div>
+
+            <div>
+
+                <h2>
+                    {{deliveryboy.name}}
+                </h2>
+
+                <p>
+                    Delivery Executive
+                </p>
+
+            </div>
+
+        </div>
+
+        <a href="{% url 'editdeliveryprofile' %}" class="edit-btn">
+            <i class="bi bi-pencil-square"></i>
+            Edit Profile
+        </a>
+
+    </div>
+
+    <!-- DETAILS -->
+    <div class="details">
+
+        <div class="detail-box">
+
+            <i class="bi bi-person"></i>
+
+            <small>Username</small>
+
+            <h6>
+                {{deliveryboy.username}}
+            </h6>
+
+        </div>
+
+        <div class="detail-box">
+
+            <i class="bi bi-envelope"></i>
+
+            <small>Email Address</small>
+
+            <h6>
+                {{deliveryboy.email}}
+            </h6>
+
+        </div>
+
+        <div class="detail-box">
+
+            <i class="bi bi-telephone"></i>
+
+            <small>Contact Number</small>
+
+            <h6>
+                {{deliveryboy.phone}}
+            </h6>
+
+        </div>
+
+        <div class="detail-box">
+
+            <i class="bi bi-geo-alt"></i>
+
+            <small>Address</small>
+
+            <h6>
+                {{deliveryboy.address}}
+            </h6>
+
+        </div>
+
+        <div class="detail-box">
+
+            <i class="bi bi-shield-lock"></i>
+
+            <small>Password</small>
+
+            <h6>
+                ••••••••••
+            </h6>
+
+        </div>
+
+    </div>
+
+    <!-- STATUS -->
+    <div class="status-box">
+
+        <i class="bi bi-shield-check"></i>
+        Delivery tracking and order management services are currently active.
+
+    </div>
+
+</div>
+
+{% endblock %}
