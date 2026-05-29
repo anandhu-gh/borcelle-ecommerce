@@ -228,7 +228,7 @@ def editProduct(request, id):
 
 def deleteProduct(request, id):
     Product.objects.filter(ProductId=id).delete()
-    return HttpResponse("<script>alert('Product deleted sucessfully!!');window.location='/admin/products/'</script>")
+    return HttpResponse("<script>alert('Product deleted sucessfully!!');window.location='/admin/adminproducts/'</script>")
 
 
 

@@ -48,6 +48,7 @@
 {% if product_details %}
 <div class="guest-product-grid">
   {% for product in product_details %}
+      <a href="{% url 'login'}" style="text-decoration: none; color: inherit;">
   <a class="g-prod-card">
     <div class="g-prod-img">
       <div class="g-prod-badge">Premium</div>
@@ -61,6 +62,7 @@
         <div class="g-prod-btn">View Details &rarr;</div>
       </div>
     </div>
+  </a>
   </a>
   {% endfor %}
 </div>
