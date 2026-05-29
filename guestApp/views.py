@@ -32,7 +32,9 @@ def loginProcess(request):
             role = logindata.role
 
             if role == 'Admin':
-                return redirect('adminhome')
+                return HttpResponse(
+                    "<script>alert('Redirecting to Admin Panel');window.location='/admin/adminhome/'</script>"
+                )
 
             elif role == 'customer':
                 return HttpResponse(
