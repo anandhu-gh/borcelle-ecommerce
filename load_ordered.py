@@ -1,22 +1,27 @@
 import django
 import os
-import sys
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'finalProject.settings')
 django.setup()
 
-from django.db import connection
 from django.core.management import call_command
 
-print("Disabling FK constraints for data load...")
+# Load in strict dependency order, one file at a time
+# Each loaddata call completes and commits before the next starts
+fixtures_in_order = [
+    'auth_users.json',
+    'guestapp_data.json',
+    'adminapp_data.json',
+    'customerapp_data.json',
+    'deliveryapp_data.json',
+]
 
-with connection.cursor() as cursor:
-    cursor.execute('SET session_replication_role = replica;')
+for fixture in fixtures_in_order:
+    if os.path.exists(fixture):
+        print(f"Loading {fixture}...")
+        call_command('loaddata', fixture, verbosity=1)
+        print(f"✓ {fixture} done")
+    else:
+        print(f"Skipping {fixture} — not found")
 
-print("Loading fixture...")
-call_command('loaddata', 'data_backup.json', verbosity=2)
-
-with connection.cursor() as cursor:
-    cursor.execute('SET session_replication_role = DEFAULT;')
-
-print("FK constraints re-enabled. Done!")
+print("All data loaded!")
