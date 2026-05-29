@@ -15,7 +15,7 @@ import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-TEMPLATES_DIR = os.path.join(BASE_DIR,"templates")
+TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-qt-cgf0eh-$njz3u0-v+rk+1*w((y(-t!-y#q$$k2fjynx$5ob
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ✅ UPDATED: Added Render domain wildcard along with localhost
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.render.com']
 
 
 # Application definition
@@ -46,14 +47,13 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Handles static files cleanly on cloud servers
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
     'finalProject.middleware.SessionCheckMiddleware',
 ]
 
@@ -81,10 +81,18 @@ WSGI_APPLICATION = 'finalProject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# Check if we are running on Render's cloud servers
+if 'RENDER' in os.environ:
+    # Tell Django to put the database inside the persistent disk folder
+    DB_DIR = '/data'
+else:
+    # Locally on your PC, keep using your standard project directory
+    DB_DIR = BASE_DIR
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.path.join(DB_DIR, 'db.sqlite3'),
     }
 }
 
@@ -128,6 +136,9 @@ STATIC_DIR = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [STATIC_DIR]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# ✅ ADDED: Production static optimization via WhiteNoise
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
