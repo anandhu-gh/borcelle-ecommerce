@@ -52,7 +52,7 @@ def addCategory(request):
             </script>
         """)
 
-    return render(request, 'admin/addCategory.html')
+    return render(request, 'Admin/addCategory.html')
 
 def addProduct(request):
 
@@ -94,7 +94,7 @@ def addProduct(request):
             </script>
         """)
 
-    return render(request, 'admin/addProduct.html', {
+    return render(request, 'Admin/addProduct.html', {
         'categories': categories
     })
 

@@ -1,3 +1,29 @@
-"db.sqlite3" 
-"build.sh" 
-"data_backup.json" 
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+.venv/
+
+# SQLite database
+db.sqlite3
+
+# Media uploads (optional)
+media/
+
+# Environment variables
+.env
+
+# VS Code
+.vscode/
+
+# Static collected files
+staticfiles/
+
+# Backup files
+data_backup.json
+
+# OS files
+.DS_Store
+Thumbs.db
