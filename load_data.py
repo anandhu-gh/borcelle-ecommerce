@@ -18,7 +18,6 @@ def load_fixtures_safely():
     with open(fixture_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
-    # Tables we should NEVER try to import from a JSON file
     SKIP_APPS = {'sessions', 'admin', 'contenttypes', 'auth'}
 
     with connection.cursor() as cursor:
@@ -26,32 +25,35 @@ def load_fixtures_safely():
 
         with transaction.atomic():
             for entry in data:
-                app_label, model_name = entry['model'].split('.')
+                # Add a broad layer of protection for every single row
+                try:
+                    app_label, model_name = entry['model'].split('.')
+                    if app_label in SKIP_APPS:
+                        continue
+                    
+                    model = apps.get_model(app_label, model_name)
+                    fields = entry['fields']
+                    pk = entry['pk']
+                    
+                    instance, created = model.objects.get_or_create(pk=pk)
+                    
+                    for field_name, field_value in fields.items():
+                        try:
+                            field = model._meta.get_field(field_name)
+                            if field.is_relation and field.many_to_one:
+                                setattr(instance, f"{field_name}_id", field_value)
+                            else:
+                                setattr(instance, field_name, field_value)
+                        except:
+                            continue
+                    
+                    instance.save()
+                except Exception as e:
+                    # If this specific row fails (like the null-constraint error), 
+                    # we print it and keep going!
+                    print(f"⚠️ Skipping problematic row for {entry.get('model')}: {e}")
                 
-                # Filter out system apps that cause 'null value' errors
-                if app_label in SKIP_APPS:
-                    continue
-                
-                model = apps.get_model(app_label, model_name)
-                fields = entry['fields']
-                pk = entry['pk']
-                
-                # Safely get or create the instance
-                instance, created = model.objects.get_or_create(pk=pk)
-                
-                for field_name, field_value in fields.items():
-                    try:
-                        field = model._meta.get_field(field_name)
-                        if field.is_relation and field.many_to_one:
-                            setattr(instance, f"{field_name}_id", field_value)
-                        else:
-                            setattr(instance, field_name, field_value)
-                    except:
-                        continue # Skip fields that might not exist in the new schema
-                
-                instance.save()
-                
-    print("⭐⭐ DATABASE SYNCED SUCCESSFULLY! ⭐⭐")
+    print("⭐⭐ DATABASE SYNC ATTEMPT COMPLETED! ⭐⭐")
 
 if __name__ == '__main__':
     load_fixtures_safely()
