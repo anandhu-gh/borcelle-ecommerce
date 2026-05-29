@@ -28,8 +28,7 @@ SECRET_KEY = 'django-insecure-qt-cgf0eh-$njz3u0-v+rk+1*w((y(-t!-y#q$$k2fjynx$5ob
 DEBUG = True
 
 # ✅ UPDATED: Added Render domain wildcard along with localhost
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.render.com']
-
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'borcelle-ecommerce.onrender.com']
 
 # Application definition
 
@@ -98,7 +97,7 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-    
+
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
