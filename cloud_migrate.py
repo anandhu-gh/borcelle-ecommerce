@@ -73,7 +73,7 @@ def run_migration():
                 raw_fields = obj_data['fields']
                 cleaned_fields = {}
                 
-                # Assign Primary Key
+                # Assign Primary Key field
                 if 'pk' in obj_data:
                     cleaned_fields[pk_field_name] = obj_data['pk']
                 
@@ -89,8 +89,13 @@ def run_migration():
                     elif field_name in valid_field_names:
                         cleaned_fields[field_name] = field_val
 
-                # Instantiate model mapping attributes dynamically
-                instance = model(**cleaned_fields)
+                # 🔥 THE ABSOLUTE BYPASS: Instantiate a blank model container
+                instance = model()
+                
+                # Explicitly force-inject properties to bypass Django's __init__ validation traps
+                for key, val in cleaned_fields.items():
+                    setattr(instance, key, val)
+
                 try:
                     instance.save(force_insert=True)
                 except Exception:
