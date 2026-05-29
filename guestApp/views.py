@@ -36,7 +36,7 @@ def loginProcess(request):
 
             elif role == 'customer':
                 return HttpResponse(
-                    "<script>alert('Login Successful!');window.location='/customer/customerhome/'</script>"
+                    "<script>alert('Login Successful!');window.location='/customer/home/'</script>"
                 )
             elif role == 'DeliveryBoy':
                 return HttpResponse(
@@ -94,7 +94,7 @@ def signupProcess(request):
         )
         customer.save()
 
-        return HttpResponse("<script>alert('Account Created Successfully');window.location='/customer/customerhome/'</script>")
+        return HttpResponse("<script>alert('Account Created Successfully');window.location='/customer/home/'</script>")
 
     return redirect('login')
 

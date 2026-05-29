@@ -90,7 +90,7 @@ def addProduct(request):
         return HttpResponse("""
             <script>
                 alert('Product added successfully!!');
-                window.location='/admin/addproduct/';
+                window.location='/admin/addproductform/';
             </script>
         """)
 

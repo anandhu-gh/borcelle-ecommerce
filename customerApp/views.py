@@ -8,7 +8,7 @@ from adminApp.models import District, Product, Category
 from customerApp.models import Cart, Order, OrderItem, Payment, Feedback
 
 def customerHome(request):
-    return render(request, 'customer/customerHome.html')
+    return render(request, 'Customer/customerHome.html')
 
 def customerProfile(request):
     login_id = request.session.get('loginId')
