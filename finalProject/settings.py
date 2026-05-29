@@ -81,18 +81,10 @@ WSGI_APPLICATION = 'finalProject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-# Check if we are running on Render's cloud servers
-if 'RENDER' in os.environ:
-    # Tell Django to put the database inside the persistent disk folder
-    DB_DIR = '/data'
-else:
-    # Locally on your PC, keep using your standard project directory
-    DB_DIR = BASE_DIR
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(DB_DIR, 'db.sqlite3'),
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
