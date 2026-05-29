@@ -1,5 +1,26 @@
+# Virtual Environment (Keeps bulky Python packages off GitHub)
 venv/
+.venv/
+env/
+
+# Python caching (Prevents temporary compilation junk files)
 __pycache__/
 *.pyc
-db.sqlite3
+*.pyo
+*.pyd
+
+# Django Security (CRITICAL: Never upload your secret keys/passwords)
 .env
+
+# Media & Static folders (Optional: if you upload massive images/css locally)
+media/
+staticfiles/
+
+# Database (Commented out with # so it WILL upload to GitHub as requested)
+# db.sqlite3
+
+# IDE and OS specific files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
