@@ -38,7 +38,7 @@ def loginProcess(request):
 
             elif role == 'customer':
                 return HttpResponse(
-                    "<script>alert('Login Successful!');window.location='/customer/home/'</script>"
+                    "<script>alert('Welcome Back!');window.location='/customer/home/'</script>"
                 )
             elif role == 'DeliveryBoy':
                 return HttpResponse(
