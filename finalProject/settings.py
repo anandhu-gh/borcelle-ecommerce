@@ -81,9 +81,13 @@ WSGI_APPLICATION = 'finalProject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+
+# DYNAMIC ENVIRONMENT ROUTING FIX
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL')
+        # If DATABASE_URL exists (Render), use it. If not (Your PC), use SQLite safely.
+        default=os.environ.get('DATABASE_URL', f"sqlite:///{os.path.join(BASE_DIR, 'db.sqlite3')}"),
+        conn_max_age=600
     )
 }
 

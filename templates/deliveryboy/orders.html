@@ -143,9 +143,10 @@ tr:hover td{
 {% for o in paid_orders %}
 
 <tr>
-
-    <!-- ORDER -->
-    <td class="id">#{{ o.order_id }}</td>
+    <!-- ORDER ID -->
+    <td class="id">
+        #{{ o.order_id }}
+    </td>
 
     <!-- CUSTOMER -->
     <td>
@@ -158,10 +159,10 @@ tr:hover td{
         {{ o.customer.address }}
     </td>
 
-    <!-- PRODUCTS -->
+    <!-- PRODUCTS (GROUPED CLEANLY) -->
     <td class="products">
         {% for item in o.orderitem_set.all %}
-            {{ item.product.ProductName }} × {{ item.quantity }}<br>
+            • {{ item.product.ProductName }} × {{ item.quantity }}<br>
         {% endfor %}
     </td>
 
@@ -189,7 +190,6 @@ tr:hover td{
             <span class="done">Completed</span>
         {% endif %}
     </td>
-
 </tr>
 
 {% endfor %}

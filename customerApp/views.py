@@ -41,7 +41,7 @@ def productDetails(request, id,name):
 
 def allCategories(request):
     categories = Category.objects.prefetch_related('products').all()
-    return render(request, 'customer/allCategories.html', {'categories': categories})
+    return render(request, 'Customer/allCategories.html', {'categories': categories})
 
 def categoryView(request, category_id, category_name=None):
     # Fetch category by ID
@@ -158,6 +158,7 @@ def checkout(request):
 
 def paymentPage(request):
     login_id = request.session.get('loginId')
+
     if not login_id:
         return redirect('login')
 
@@ -166,7 +167,13 @@ def paymentPage(request):
 
     total = sum(item.product.ProductPrice * item.quantity for item in cart_items)
 
-    return render(request, 'Customer/payment.html', {'total': total})
+    # 🔥 lock checkout session (important fix)
+    request.session['checkout_started'] = True
+
+    return render(request, 'Customer/payment.html', {
+        'total': total,
+        'cart_items': cart_items
+    })
 
 def confirmPayment(request):
 
@@ -177,54 +184,51 @@ def confirmPayment(request):
     if not login_id:
         return redirect('login')
 
-    customer = Customer.objects.get(loginId_id=login_id)
+    # 🔥 prevent multiple orders per checkout
+    if not request.session.get('checkout_started'):
+        return HttpResponse("<script>alert('Invalid checkout session');window.location='/cart'</script>")
 
+    customer = Customer.objects.get(loginId_id=login_id)
     cart_items = Cart.objects.filter(customer=customer)
 
     if not cart_items:
         return redirect('cart')
 
-    # 🔹 calculate total again (never trust frontend)
-    total = 0
-    for item in cart_items:
-        total += item.product.ProductPrice * item.quantity
+    total = sum(item.product.ProductPrice * item.quantity for item in cart_items)
 
-    # 🔹 get card number
     card_number = request.POST.get('card_number')
     last4 = card_number[-4:] if card_number else "0000"
 
-    # 🔹 create order
+    # ✔ ONE ORDER ONLY HERE
     order = Order.objects.create(
         customer=customer,
         total_amount=total
     )
 
-    # 🔹 copy cart → order items
     for item in cart_items:
-        product = item.product
         OrderItem.objects.create(
             order=order,
             product=item.product,
             quantity=item.quantity,
             price=item.product.ProductPrice
         )
-        product.stock -= item.quantity
-        product.save()
+        item.product.stock -= item.quantity
+        item.product.save()
 
-    # 🔹 create payment
     Payment.objects.create(
         customer=customer,
         order=order,
         amount=total,
         card_last4=last4,
     )
-    order.status = "Confirmed"
-    order.save()
-    #clear only this user's cart
+
     cart_items.delete()
 
+    # 🔥 close checkout session
+    request.session['checkout_started'] = False
+
     return HttpResponse(
-        f"<script>alert('Order #{order.order_id} placed successfully');window.location='/customer/cart/'</script>"
+        f"<script>alert('Order #{order.order_id} placed successfully');window.location='/customer/orderhistory/'</script>"
     )
 
 def editProfile(request):
@@ -277,36 +281,44 @@ def submitFeedback(request, id):
 
     login_id = request.session.get('loginId')
 
-    #  Check if the form was actually submitted (POST request)
     if request.method == "POST":
-        
-        #  Fetch the current customer and the specific order from the database
+
         customer = Customer.objects.get(loginId_id=login_id)
         order = Order.objects.get(order_id=id)
 
-        #  Loop through every single product included inside this order
+        saved = 0  # count how many feedbacks are saved
+
         for item in order.orderitem_set.all():
-            
-            #  Extract the specific rating and comment values for this item from the form data
+
             rating = request.POST.get(f"rating_{item.order_item_id}")
             message = request.POST.get(f"message_{item.order_item_id}", "").strip()
 
-            # OPTIONAL ROW CHECK: If BOTH rating and comment are empty, skip this product
-            if not rating and not message:
-                continue
+            if rating or message:
+                Feedback.objects.create(
+                    customer=customer,
+                    order=order,
+                    product=item.product,
+                    rating=int(rating) if rating else 5,
+                    message=message
+                )
+                saved += 1
 
-            #  SAVE TO DATABASE: Create a review row for this specific item
-            Feedback.objects.create(
-                customer=customer,
-                order=order,
-                product=item.product,
-                rating=int(rating) if rating else 5,  # Use selected rating, or default to 5 if blank
-                message=message                       # Save the text comment
-            )
-        
-        # Success popup message and redirect back to the order history page
-        return HttpResponse("<script>alert('Feedback submitted successfully');window.location='/customer/orderhistory/'</script>")
+        # ❌ if nothing was saved
+        if saved == 0:
+            return HttpResponse("""
+                <script>
+                    alert('Please enter at least one feedback');
+                    window.history.back();
+                </script>
+            """)
 
-    # Fallback: If someone just types this URL manually, send them back to order history
+        # ✅ success
+        return HttpResponse("""
+            <script>
+                alert('Feedback submitted successfully');
+                window.location='/customer/orderhistory/';
+            </script>
+        """)
+
     return redirect('orderhistory')
 
