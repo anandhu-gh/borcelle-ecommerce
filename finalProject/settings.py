@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-qt-cgf0eh-$njz3u0-v+rk+1*w((y(-t!-y#q$$k2fjynx$5ob
 DEBUG = True
 
 # ✅ UPDATED: Added Render domain wildcard along with localhost
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'borcelle-ecommerce.onrender.com']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -47,7 +47,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Handles static files cleanly on cloud servers
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
