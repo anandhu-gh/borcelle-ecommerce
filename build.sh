@@ -7,5 +7,5 @@ pip install -r requirements.txt
 python manage.py collectstatic --no-input
 python manage.py migrate
 
-# 🔥 Add this line to load your fresh database entries:
-python manage.py loaddata data_backup.json
+# 🚀 AUTOMATED LOADING: Handles all apps, regardless of order or how many you have!
+python manage.py loaddata data_backup.json --ignorenonexistent
