@@ -87,7 +87,7 @@ with transaction.atomic():
             raw_fields = obj_data['fields']
             cleaned_fields = {}
             
-            # 1. Assign the Primary Key dynamically
+            # 1. Assign the Primary Key dynamically (handles custom ID field names)
             if 'pk' in obj_data:
                 cleaned_fields[pk_field_name] = obj_data['pk']
             
@@ -99,7 +99,7 @@ with transaction.atomic():
                         m2m_deferred_jobs.append((obj_data['pk'], field_name, field_val))
                     continue
                 
-                # Check for Foreign Key routing modifications
+                # 🔥 FIX: Append _id to ForeignKey column targets dynamically
                 if field_name in fk_fields:
                     target_key = field_name if field_name.endswith('_id') else f'{field_name}_id'
                     cleaned_fields[target_key] = field_val
