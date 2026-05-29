@@ -33,7 +33,7 @@ def loginProcess(request):
 
             if role == 'Admin':
                 return HttpResponse(
-                    "<script>alert('Welcome Admin');window.location='/admin/adminhome/'</script>"
+                    "<script>alert('Welcome to Admin Panel');window.location='/admin/adminhome/'</script>"
                 )
 
             elif role == 'customer':
