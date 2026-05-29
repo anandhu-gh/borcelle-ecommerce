@@ -13,7 +13,7 @@ python manage.py collectstatic --no-input
 # 3. Rebuild empty architecture in PostgreSQL
 python manage.py migrate
 
-# 4. Run an inline Python script to feed data sequentially without constraints crashing
+# 4. Run the Python data stream with correct app capitalization
 python -c "
 import os, json, django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'finalProject.settings')
@@ -30,49 +30,52 @@ print('📖 Reading data backup file...')
 with open('data_backup.json', 'r', encoding='utf-8') as f:
     fixtures = json.load(f)
 
-# Sort models by logical order so parents load before dependent keys
+# 🔥 FIXED: Exact capitalization to match your project configuration
 ordered_labels = [
-    'adminapp.category',
-    'adminapp.district',
-    'adminapp.location',
-    'guestapp.logindetails',
-    'guestapp.customer',
-    'adminapp.deliveryboy',
-    'adminapp.product',
-    'customerapp.cart',
-    'customerapp.order',
-    'customerapp.payment',
-    'customerapp.orderitem',
-    'customerapp.feedback'
+    'adminApp.category',
+    'adminApp.district',
+    'adminApp.location',
+    'guestApp.logindetails',
+    'guestApp.customer',
+    'adminApp.deliveryboy',
+    'adminApp.product',
+    'customerApp.cart',
+    'customerApp.order',
+    'customerApp.payment',
+    'customerApp.orderitem',
+    'customerApp.feedback'
 ]
 
-# Group objects from the file based on our logical order
+# Match keys exactly with the configuration array above
 data_buckets = {label: [] for label in ordered_labels}
 unknown_objects = []
 
 for item in fixtures:
-    model_label = item['model'].lower()
-    if model_label in data_buckets:
-        data_buckets[model_label].append(item)
-    else:
+    # Look for case-insensitive matches to sort them safely
+    matched = False
+    for target_label in ordered_labels:
+        if item['model'].lower() == target_label.lower():
+            data_buckets[target_label].append(item)
+            matched = True
+            break
+    if not matched:
         unknown_objects.append(item)
 
-# Stream rows chronologically into PostgreSQL
 print('🛰️ Feeding records to PostgreSQL sequentially...')
 with transaction.atomic():
-    # Load recognized priority items first
     for label in ordered_labels:
-        model = apps.get_model(label)
+        # Resolves using the correct app label string
+        app_name, model_name = label.split('.')
+        model = apps.get_model(app_label=app_name, model_name=model_name)
         items = data_buckets[label]
+        
         if items:
             print(f'📦 Populating table: {label} ({len(items)} rows)')
             for obj_data in items:
                 fields = obj_data['fields']
-                # Restore the explicit primary key identifier
                 if 'pk' in obj_data:
                     fields['id'] = obj_data['pk']
                 
-                # Resolve foreign key relationship strings to simple integers
                 for field_name, field_val in list(fields.items()):
                     if isinstance(field_val, list):
                         del fields[field_name]
@@ -86,10 +89,10 @@ with transaction.atomic():
                     except Exception:
                         pass
 
-    # Load any remaining structural configurations
     for obj_data in unknown_objects:
         try:
-            model = apps.get_model(obj_data['model'])
+            app_n, model_n = obj_data['model'].split('.')
+            model = apps.get_model(app_label=app_n, model_name=model_n)
             fields = obj_data['fields']
             if 'pk' in obj_data:
                 fields['id'] = obj_data['pk']
