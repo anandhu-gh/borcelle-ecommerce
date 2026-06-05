@@ -1,0 +1,133 @@
+{% extends "customerHeader.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+    .policy-editorial {
+        max-width: 900px;
+        margin: 80px auto;
+        padding: 0 30px;
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        color: #334155;
+    }
+
+    /* Minimal Stark Header */
+    .policy-intro {
+        margin-bottom: 60px;
+    }
+
+    .policy-intro h1 {
+        font-size: 42px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 10px 0;
+        letter-spacing: -1px;
+    }
+
+    .meta-line {
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #64748b;
+        font-weight: 600;
+    }
+
+    /* Document Index Section Layout */
+    .clause-section {
+        display: grid;
+        grid-template-columns: 80px 1fr;
+        gap: 20px;
+        padding: 40px 0;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .clause-section:last-child {
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    @media (max-width: 600px) {
+        .clause-section { grid-template-columns: 1fr; gap: 10px; padding: 30px 0; }
+    }
+
+    .clause-index {
+        font-size: 18px;
+        font-weight: 700;
+        color: #1b4332;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .clause-content h3 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #0f172a;
+        margin: 0 0 15px 0;
+    }
+
+    .clause-body {
+        font-size: 15px;
+        line-height: 1.7;
+        color: #475569;
+        margin: 0;
+    }
+
+    .sub-points {
+        margin-top: 15px;
+        padding-left: 18px;
+        list-style-type: square;
+    }
+
+    .sub-points li {
+        font-size: 14px;
+        color: #64748b;
+        margin-bottom: 8px;
+    }
+</style>
+
+<div class="policy-editorial">
+    
+    <!-- Title Node -->
+    <div class="policy-intro">
+        <h1>Operating Terms & Rules</h1>
+        <div class="meta-line">Legal Framework / June 2026</div>
+    </div>
+
+    <!-- Clause 01 -->
+    <div class="clause-section">
+        <div class="clause-index">[01]</div>
+        <div class="clause-content">
+            <h3>System Execution Parameters</h3>
+            <p class="clause-body">
+                By entering this site architecture, utilizing checkout modules, or initiating server requests, you automatically signify full assent to our active logistical frameworks and pricing profiles.
+            </p>
+        </div>
+    </div>
+
+    <!-- Clause 02 -->
+    <div class="clause-section">
+        <div class="clause-index">[02]</div>
+        <div class="clause-content">
+            <h3>Transactional Safety & Ledgers</h3>
+            <p class="clause-body">
+                Payment procedures deploy instant gateway validations. Our databases bypass the long-term archival of raw credit tracking arrays, saving only basic card markers for absolute systemic integrity.
+            </p>
+            <ul class="sub-points">
+                <li>Inventory holds only activate upon absolute payment verification.</li>
+                <li>Valuation adjustments might manifest dynamically matching storage parameters.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Clause 03 -->
+    <div class="clause-section">
+        <div class="clause-index">[03]</div>
+        <div class="clause-content">
+            <h3>Geographic Restrictions</h3>
+            <p class="clause-body">
+                Fulfilment pipelines correlate with localized hub boundaries. Users bear full responsibility for defining their accurate operational district filters prior to final purchase commitments.
+            </p>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

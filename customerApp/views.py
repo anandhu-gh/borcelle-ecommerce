@@ -10,6 +10,12 @@ from customerApp.models import Cart, Order, OrderItem, Payment, Feedback
 def customerHome(request):
     return render(request, 'Customer/customerHome.html')
 
+def aboutPage(request):
+    return render(request, 'Customer/about.html')
+
+def termsandpolicyPage(request):
+    return render(request, 'Customer/terms.html')
+
 def customerProfile(request):
     login_id = request.session.get('loginId')
 
@@ -272,7 +278,7 @@ def editProfile(request):
 
     districts = District.objects.all()
 
-    return render(request, 'customer/editProfile.html', {
+    return render(request, 'Customer/editProfile.html', {
         'customer_details': customer,
         'districts': districts
     })

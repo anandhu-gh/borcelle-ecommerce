@@ -68,10 +68,6 @@ def editDeliveryProfile(request):
             return HttpResponse("<script>alert('Username already exists!');window.location='/delivery/editprofile/'</script>")
 
 
-        # same password check
-        if new_password == deliveryboy.password:
-            return HttpResponse("<script>alert('Cannot use same passwod!');window.location='/delivery/editprofile/'</script>")
-
         # update details
         deliveryboy.name = request.POST.get('name')
         deliveryboy.phone = request.POST.get('phone')

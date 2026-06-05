@@ -8,6 +8,11 @@ from adminApp.models import District, Product
 def homePage(request):
     return render(request, 'Guest/home.html')
 
+def aboutPage(request):
+    return render(request, 'Guest/about.html')
+
+def termsandpolicyPage(request):
+    return render(request, 'Guest/terms.html')
 
 def productsList(request):
     product_details = Product.objects.all()
