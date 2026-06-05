@@ -260,7 +260,7 @@ def editProfile(request):
             customer.district = District.objects.get(district_id=dist_id)
 
         # FIXED duplicate check
-        if LoginDetails.objects.filter(username=new_username).exists():
+        if LoginDetails.objects.filter(username=new_username).exclude(loginId=login_id).exists():
             return HttpResponse("<script>alert('Username already exists');window.location='/customer/editprofile/'</script>")
         login.username = new_username
 
