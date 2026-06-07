@@ -169,6 +169,12 @@ def addDeliveryBoy(request):
     }
     return render(request, 'Admin/addDeliveryBoy.html', context)
 
+def deleteDeliveryBoy(request, id):
+    deliveryboy = DeliveryBoy.objects.get(deliveryboy_id=id)
+    deliveryboy.loginId.delete()
+    
+    return HttpResponse("<script>alert('Delivery Boy deleted sucessfully!!');window.location='/admin/add-delivery-boy/'</script>")
+
 def productsList(request):
     categories = Category.objects.all()
     product_details = Product.objects.all()
