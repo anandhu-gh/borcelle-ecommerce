@@ -292,7 +292,11 @@ def fillLocation(request):
 
     return JsonResponse(list(locations), safe=False)
 
+from django.http import JsonResponse
+from .models import Product
+
 def filter_products(request):
+
     category = request.GET.get('category')
 
     if category == "all":
@@ -300,14 +304,16 @@ def filter_products(request):
     else:
         products = Product.objects.filter(category_id=category)
 
-    data = list(products.values(
-        'ProductId',
-        'ProductName',
-        'ProductDescription',
-        'ProductPrice',
-        'stock',
-        'ProductImage'
-    ))
+    data = []
+
+    for p in products:
+        data.append({
+            'id': p.ProductId,
+            'name': p.ProductName,
+            'price': str(p.ProductPrice),
+            'stock': p.stock,
+            'image': p.ProductImage.url
+        })
 
     return JsonResponse(data, safe=False)
 

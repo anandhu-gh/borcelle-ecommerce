@@ -85,74 +85,45 @@ img{
 
     </div>
 
-    <select id="category">
+   <select id="category">
 
-        <option value="all">All Categories</option>
+    <option value="all">All Categories</option>
 
-        {% for c in categories %}
-            <option value="{{ c.category_id }}">
-                {{ c.category_name }}
-            </option>
+    {% for c in categories %}
+        <option value="{{ c.category_id }}">
+            {{ c.category_name }}
+        </option>
+    {% endfor %}
+
+</select>
+
+<table>
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Stock</th>
+        </tr>
+    </thead>
+
+    <tbody id="product-container">
+
+        {% for p in product_details %}
+        <tr>
+            <td>
+                {% if p.ProductImage %}
+                    <img src="{{ p.ProductImage.url }}" width="50">
+                {% endif %}
+            </td>
+            <td>{{ p.ProductName }}</td>
+            <td>₹{{ p.ProductPrice }}</td>
+            <td>{{ p.stock }}</td>
+        </tr>
         {% endfor %}
 
-    </select>
-
-    <div class="card">
-
-        <table>
-
-            <thead>
-
-                <tr>
-                    <th>Image</th>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th>Action</th>
-                </tr>
-
-            </thead>
-
-            <tbody id="product-container">
-
-                {% for p in product_details %}
-
-                <tr>
-
-                    <td>
-
-                        {% if p.ProductImage %}
-                            <img src="{{ p.ProductImage.url }}">
-                        {% endif %}
-
-                    </td>
-
-                    <td>{{ p.ProductName }}</td>
-
-                    <td>₹{{ p.ProductPrice }}</td>
-
-                    <td>{{ p.stock }}</td>
-
-                    <td>
-
-                        <a href="{% url 'editproduct' p.ProductId %}" class="edit">
-                            Edit
-                        </a>
-
-                        <a href="{% url 'deleteproduct' p.ProductId %}" class="delete">
-                            Delete
-                        </a>
-
-                    </td>
-
-                </tr>
-
-                {% endfor %}
-
-            </tbody>
-
-        </table>
-
+    </tbody>
+</table>
     </div>
 
 </div>
@@ -161,59 +132,40 @@ img{
 
 <script>
 
-$('#category').change(function(){
+document.getElementById("category").onchange = function(){
 
-    $.get(
+    let category = this.value;
 
-        "{% url 'filter_products' %}",
+    fetch("{% url 'filter_products' %}?category=" + category)
 
-        {category:$(this).val()},
+    .then(response => response.json())
 
-        function(data){
+    .then(data => {
 
-            $('#product-container').html('');
+        let rows = "";
 
-            $.each(data,function(i,p){
+        for(let i = 0; i < data.length; i++){
 
-                $('#product-container').append(
+            rows += `
+            <tr>
+                <td>
+                    <img src="${data[i].image}" width="50">
+                </td>
 
-                    `<tr>
+                <td>${data[i].name}</td>
 
-                        <td>
-                            ${p.ProductImage
-                            ? `<img src="/media/${p.ProductImage}">`
-                            : ''}
-                        </td>
+                <td>₹${data[i].price}</td>
 
-                        <td>${p.ProductName}</td>
-
-                        <td>₹${p.ProductPrice}</td>
-
-                        <td>${p.stock}</td>
-
-                        <td>
-
-                            <a href="/editproduct/${p.ProductId}/" class="edit">
-                                Edit
-                            </a>
-
-                            <a href="/deleteproduct/${p.ProductId}/" class="delete">
-                                Delete
-                            </a>
-
-                        </td>
-
-                    </tr>`
-
-                );
-
-            });
-
+                <td>${data[i].stock}</td>
+            </tr>
+            `;
         }
 
-    );
+        document.getElementById("product-container").innerHTML = rows;
 
-});
+    });
+
+};
 
 </script>
 
