@@ -5,30 +5,22 @@ from .models import LoginDetails, Customer
 from adminApp.models import District, Product
 
 
-# ---------------------------------------------------
-# HOME PAGE (for visitors who haven't logged in)
-# ---------------------------------------------------
+# home page for visitors who havent logged in yet
 def homePage(request):
     return render(request, 'Guest/home.html')
 
 
-# ---------------------------------------------------
-# ABOUT PAGE
-# ---------------------------------------------------
+# about page
 def aboutPage(request):
     return render(request, 'Guest/about.html')
 
 
-# ---------------------------------------------------
-# TERMS AND POLICY PAGE
-# ---------------------------------------------------
+# terms and policy page
 def termsandpolicyPage(request):
     return render(request, 'Guest/terms.html')
 
 
-# ---------------------------------------------------
-# SHOW LIST OF PRODUCTS (guest-facing, before login)
-# ---------------------------------------------------
+# shows product list before login (guest side)
 def productsList(request):
     product_details = Product.objects.all()
     return render(request, 'Guest/products.html', {
@@ -37,36 +29,29 @@ def productsList(request):
     })
 
 
-# ---------------------------------------------------
-# SHOW LOGIN / SIGNUP PAGE
-# ---------------------------------------------------
+# shows the login / signup page
 def loginPage(request):
-    # needed for the signup form's district dropdown
+    # needed for the district dropdown in signup form
     dist = District.objects.all()
     return render(request, 'Guest/loginRegister.html', {'dist': dist})
 
 
-# ---------------------------------------------------
-# ADMIN HOME (kept here as in original, though adminApp
-# already has its own adminHome view)
-# ---------------------------------------------------
+# admin home (kept as it was, even though adminApp already has its own one)
 def adminHome(request):
     return render(request, 'Admin/index.html')
 
 
-# ---------------------------------------------------
-# HANDLE LOGIN FORM SUBMISSION
-# ---------------------------------------------------
+# handles login form submit
 def loginProcess(request):
     if request.method == "POST":
         name = request.POST.get('username')
         password = request.POST.get('password')
 
-        # check if a login with this username + password exists
+        # check if username + password matches something in db
         if LoginDetails.objects.filter(username=name, password=password).exists():
             logindata = LoginDetails.objects.get(username=name, password=password)
 
-            # store the logged-in user's id in the session
+            # storing logged in user id in session
             request.session['loginId'] = logindata.loginId
             role = logindata.role
 
@@ -86,26 +71,23 @@ def loginProcess(request):
                 )
 
             else:
-                # safety net: role didn't match any known type.
-                # Without this, Django would crash because the view
-                # would return nothing for this case.
+                # safety net, just in case role doesnt match any of the above
+                # without this django would complain that view returned nothing
                 return HttpResponse(
                     "<script>alert('Unknown user role');window.location='/login'</script>"
                 )
 
         else:
-            # username/password didn't match anything
+            # username/password didnt match anything in db
             return HttpResponse(
                 "<script>alert('Invalid Username or Password');window.location='/login'</script>"
             )
 
-    # if it's a GET request (not a form submission), just go to login page
+    # GET request, not a form submit, just go to login page
     return redirect('login')
 
 
-# ---------------------------------------------------
-# HANDLE SIGNUP FORM SUBMISSION (creates customer account)
-# ---------------------------------------------------
+# handles signup form submit, creates a new customer account
 def signupProcess(request):
     if request.method == "POST":
         fullname = request.POST.get('fullname')
@@ -118,17 +100,17 @@ def signupProcess(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        # check username isn't already taken
+        # check username isnt already taken
         if LoginDetails.objects.filter(username=username).exists():
             return HttpResponse("<script>alert('Username already exists');window.location='/login'</script>")
 
-        # must choose a district
+        # district is required
         if not dist_id:
             return HttpResponse("<script>alert('Select a district');window.location='/login'</script>")
 
         district = District.objects.get(pk=int(dist_id))
 
-        # step 1: create the login account
+        # step 1, create the login account first
         login = LoginDetails(
             username=username,
             password=password,
@@ -137,10 +119,10 @@ def signupProcess(request):
         )
         login.save()
 
-        # log them in immediately after signup
+        # log them in right away after signup
         request.session['loginId'] = login.loginId
 
-        # step 2: create the customer profile, linked to that login
+        # step 2, create the customer profile linked to that login
         customer = Customer(
             loginId=login,
             name=fullname,
@@ -157,15 +139,13 @@ def signupProcess(request):
 
         return HttpResponse("<script>alert('Account Created Successfully');window.location='/customer/home/'</script>")
 
-    # GET request: just send them to the login/signup page
+    # GET request, just send to login/signup page
     return redirect('login')
 
 
-# ---------------------------------------------------
-# LOGOUT
-# ---------------------------------------------------
+# logout
 def logoutProcess(request):
-    # clear the whole session (removes loginId etc.)
+    # clears the whole session (removes loginId etc)
     request.session.flush()
 
     return redirect('login')

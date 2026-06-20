@@ -1,29 +1,27 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 
-# Importing models from other apps that we need to use here
+# importing models from other apps so i can use them here
 from adminApp.models import Category, Product, District, Location, DeliveryBoy
 from customerApp.models import Order, OrderItem, Payment
 from guestApp.models import LoginDetails
 
 
-# ---------------------------------------------------
-# ADMIN DASHBOARD (HOME PAGE)
-# ---------------------------------------------------
+# admin dashboard home page
 def adminHome(request):
-    # count how many products and categories we have
+    # counting total products and categories for the dashboard
     total_products = Product.objects.count()
     total_categories = Category.objects.count()
 
-    # get all payments that are "Paid", newest first
+    # getting only the paid payments, newest one first
     payments = Payment.objects.filter(status="Paid").order_by('-created_at')
 
-    # add up all the paid payments to get total revenue
+    # now adding up all the paid amounts to get total revenue
     total_revenue = 0
     for pay in payments:
         total_revenue += pay.amount
 
-    # send all this info to the admin home page
+    # sending everything to the admin home template
     return render(request, 'Admin/index.html', {
         'total_products': total_products,
         'total_categories': total_categories,
@@ -31,26 +29,22 @@ def adminHome(request):
     })
 
 
-# ---------------------------------------------------
-# SHOW THE "ADD PRODUCT" FORM (empty form, GET request)
-# ---------------------------------------------------
+# just shows the empty add product form (when admin opens the page first time)
 def addProductForm(request):
-    # we need the list of categories to show in a dropdown
+    # need categories to fill the dropdown in the form
     categories = Category.objects.all()
 
     return render(request, 'Admin/addProduct.html', {'categories': categories})
 
 
-# ---------------------------------------------------
-# ADD A NEW CATEGORY
-# ---------------------------------------------------
+# adding a new category
 def addCategory(request):
     if request.method == "POST":
-        # get the data sent from the form
+        # taking the values from the form
         name = request.POST.get('category_name')
         image = request.FILES.get('category_image')
 
-        # check if this category name is already used (case-insensitive)
+        # checking if category already exists (ignoring upper/lower case)
         if Category.objects.filter(category_name__iexact=name).exists():
             return HttpResponse("""
                 <script>
@@ -59,7 +53,7 @@ def addCategory(request):
                 </script>
             """)
 
-        # if not, create a new category
+        # if no duplicate, go ahead and create it
         Category.objects.create(
             category_name=name,
             category_image=image
@@ -72,19 +66,17 @@ def addCategory(request):
             </script>
         """)
 
-    # if it's just a normal page visit (GET), show the empty form
+    # this runs when admin just opens the page (GET request)
     return render(request, 'Admin/addCategory.html')
 
 
-# ---------------------------------------------------
-# ADD A NEW PRODUCT
-# ---------------------------------------------------
+# adding a new product
 def addProduct(request):
-    # get list of categories for the dropdown
+    # categories needed for the dropdown
     categories = Category.objects.all()
 
     if request.method == 'POST':
-        # get all the values from the form
+        # getting all form values one by one
         p_name = request.POST.get('name')
         p_description = request.POST.get('description')
         p_image = request.FILES.get('image')
@@ -92,7 +84,7 @@ def addProduct(request):
         p_stock = request.POST.get('stock')
         cat_id = request.POST.get('category')
 
-        # check if a product with this name already exists
+        # checking if same product name already exists
         if Product.objects.filter(ProductName__iexact=p_name).exists():
             return HttpResponse("""
                 <script>
@@ -101,10 +93,10 @@ def addProduct(request):
                 </script>
             """)
 
-        # find the category object using the id from the form
+        # getting the category object using the id we got from form
         category_obj = Category.objects.get(category_id=cat_id)
 
-        # create the product (not saved yet)
+        # making the product object (not saved in db yet)
         product = Product(
             ProductName=p_name,
             ProductDescription=p_description,
@@ -114,7 +106,7 @@ def addProduct(request):
             stock=p_stock
         )
 
-        # now actually save it to the database
+        # now saving it for real
         product.save()
 
         return HttpResponse("""
@@ -124,55 +116,51 @@ def addProduct(request):
             </script>
         """)
 
-    # if GET request, just show the empty add-product form
+    # GET request, so just show the blank form again
     return render(request, 'Admin/addProduct.html', {
         'categories': categories
     })
 
 
-# ---------------------------------------------------
-# ADD A NEW LOCATION (under a district)
-# ---------------------------------------------------
 def addLocation(request):
-    # get all districts to show in dropdown
     districts = District.objects.all()
 
     if request.method == "POST":
         district_id = request.POST.get('district')
-        location = request.POST.get('location')
+        location_name = request.POST.get('location', '').strip()
 
-        # find the district object using the id
-        district = District.objects.get(district_id=district_id)
+        if district_id and location_name:
+            # Match duplicates against underlying foreign key column format
+            exists = Location.objects.filter(district_id_id=district_id, location__iexact=location_name).exists()
+            
+            if exists:
+                return HttpResponse("<script>alert('Location already exists!'); window.history.back();</script>")
+            
+            # Save the new row
+            Location.objects.create(district_id_id=district_id, location=location_name)
+            
+            # Direct historical referrer back-reload ensures popup renders completely 
+            return HttpResponse("<script>alert('Location added successfully!!'); window.location.replace(document.referrer);</script>")
 
-        # check if this location already exists (case-insensitive)
-        if Location.objects.filter(location__iexact=location).exists():
-            return HttpResponse("""
-                <script>
-                    alert('Location already exists!!');
-                    window.location='/admin/add-location/';
-                </script>
-            """)
-
-        # create the new location
-        Location.objects.create(
-            district_id=district,
-            location=location
-        )
-
-        # redirect back to the same page (using the url name "addlocation")
-        return redirect('addlocation')
-
-    return render(request, 'Admin/registerLocation.html', {
-        'districts': districts
-    })
+    return render(request, 'Admin/registerLocation.html', {'districts': districts})
 
 
-# ---------------------------------------------------
-# ADD A NEW DELIVERY BOY (and create a login for them)
-# ---------------------------------------------------
+def filter_locations(request):
+    district_id = request.GET.get('district')
+
+    if district_id == "all" or not district_id:
+        locations = Location.objects.all()
+    else:
+        locations = Location.objects.filter(district_id_id=district_id)
+
+    data = [{'location': loc.location} for loc in locations]
+    return JsonResponse(data, safe=False)
+
+
+# adding a new delivery boy, this also makes a login for them
 def addDeliveryBoy(request):
     if request.method == "POST":
-        # get form values
+        # getting all the values from form
         name = request.POST.get('name')
         phone = request.POST.get('phone')
         address = request.POST.get('address')
@@ -180,13 +168,13 @@ def addDeliveryBoy(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        # check if the username is already taken
+        # check if username already taken
         if LoginDetails.objects.filter(username=username).exists():
             return HttpResponse(
                 "<script>alert('Username already exists');window.location='/admin/add-delivery-boy/'</script>"
             )
 
-        # first create a login account for this delivery boy
+        # first make the login for this delivery boy
         login = LoginDetails.objects.create(
             username=username,
             password=password,
@@ -194,7 +182,7 @@ def addDeliveryBoy(request):
         )
         login.save()
 
-        # then create the delivery boy profile, linked to that login
+        # now make the actual delivery boy and link it to the login above
         DeliveryBoy.objects.create(
             loginId=login,
             name=name,
@@ -209,7 +197,7 @@ def addDeliveryBoy(request):
             "<script>alert('Delivery person added successfully');window.location='/admin/add-delivery-boy/'</script>"
         )
 
-    # GET request: show the form, plus a list of existing delivery boys
+    # GET request - show the form along with existing delivery boys list
     delivery_boys = DeliveryBoy.objects.all()
 
     context = {
@@ -218,15 +206,13 @@ def addDeliveryBoy(request):
     return render(request, 'Admin/addDeliveryBoy.html', context)
 
 
-# ---------------------------------------------------
-# DELETE A DELIVERY BOY (and their login too)
-# ---------------------------------------------------
+# deleting a delivery boy (and their login too)
 def deleteDeliveryBoy(request, id):
-    # find the delivery boy using the id from the url
+    # getting the delivery boy using id from url
     deliveryboy = DeliveryBoy.objects.get(deliveryboy_id=id)
 
-    # deleting their login also removes the delivery boy
-    # (because delivery boy is linked to login)
+    # deleting the login automatically deletes the delivery boy too
+    # since they are connected
     deliveryboy.loginId.delete()
 
     return HttpResponse(
@@ -234,9 +220,7 @@ def deleteDeliveryBoy(request, id):
     )
 
 
-# ---------------------------------------------------
-# SHOW LIST OF ALL PRODUCTS (admin product list page)
-# ---------------------------------------------------
+# shows the list of all products in admin side
 def productsList(request):
     categories = Category.objects.all()
     product_details = Product.objects.all()
@@ -248,27 +232,25 @@ def productsList(request):
     })
 
 
-# ---------------------------------------------------
-# SHOW DETAILS OF ONE PRODUCT
-# ---------------------------------------------------
+# shows details for one single product
 def productDetails(request, id):
-    # find the product using the id from the url
+    # find the product using id from url
     product = Product.objects.get(ProductId=id)
 
     if request.method == "POST":
-        # get the new values from the form
+        # taking new values from the form
         p_name = request.POST.get('name')
         p_description = request.POST.get('description')
         p_image = request.FILES.get('image')
         p_price = request.POST.get('price')
 
-        # IMPORTANT: we have to actually put the new values onto
-        # the product before saving, otherwise saving does nothing!
+        # need to actually set these on the product first
+        # otherwise saving wont change anything
         product.ProductName = p_name
         product.ProductDescription = p_description
         product.ProductPrice = p_price
 
-        # only change the image if a new one was uploaded
+        # only update image if a new one was actually uploaded
         if p_image:
             product.ProductImage = p_image
 
@@ -277,30 +259,28 @@ def productDetails(request, id):
     return render(request, 'Admin/productDetails.html', {'product': product, 'action': 'list'})
 
 
-# ---------------------------------------------------
-# EDIT AN EXISTING PRODUCT
-# ---------------------------------------------------
+# editing an existing product
 def editProduct(request, id):
     product = Product.objects.get(ProductId=id)
     categories = Category.objects.all()
-    duplicate = False  # this will become True if the new name is already used by another product
+    duplicate = False  # this turns true if some other product already has this name
 
     if request.method == 'POST':
         new_name = request.POST.get('name')
 
-        # check if another product (not this one) already has this name
+        # checking if another product (not this one) is already using this name
         if Product.objects.filter(ProductName__iexact=new_name).exclude(ProductId=id).exists():
             duplicate = True
         else:
-            # safe to update the basic fields
+            # no duplicate, so update the normal fields
             product.ProductName = new_name
             product.ProductDescription = request.POST.get('description')
             product.ProductPrice = request.POST.get('price')
             product.stock = request.POST.get('stock')
 
-        # get category and image OUTSIDE the if/else above,
-        # so these lines always run (this fixes a bug where
-        # "new_image" was sometimes undefined)
+        # keeping these two outside the if/else above
+        # so they always run no matter what (fixes a bug
+        # where new_image was not defined sometimes)
         new_image = request.FILES.get('image')
         cat_id = request.POST.get('category')
 
@@ -310,14 +290,14 @@ def editProduct(request, id):
         if new_image:
             product.ProductImage = new_image
 
-        # only save if there was no duplicate name problem
+        # save only if there was no duplicate name issue
         if not duplicate:
             product.save()
             return HttpResponse(
                 """<script>alert('Product updated successfully!');window.location.href='/admin/adminproducts/';</script>"""
             )
 
-    # GET request, or POST with a duplicate name problem: show the form again
+    # either GET request, or POST with duplicate name - show form again
     return render(request, 'Admin/editProduct.html', {
         'product': product,
         'action': 'list',
@@ -326,9 +306,7 @@ def editProduct(request, id):
     })
 
 
-# ---------------------------------------------------
-# DELETE A PRODUCT
-# ---------------------------------------------------
+# deleting a product
 def deleteProduct(request, id):
     Product.objects.filter(ProductId=id).delete()
     return HttpResponse(
@@ -336,42 +314,40 @@ def deleteProduct(request, id):
     )
 
 
-# ---------------------------------------------------
-# SHOW ALL ORDERS (with optional date filter)
-# ---------------------------------------------------
+# shows all orders, can filter by date too
 def orderDetails(request):
 
-    # 1. Get all paid payments (default, before any filtering)
+    # step 1: get all paid payments first (default, no filter applied yet)
     payments = Payment.objects.filter(status="Paid").order_by('-created_at')
 
-    # 2. Get the dates from the filter form, if the admin submitted one
+    # step 2: check if admin submitted any start/end date in the filter form
     start_date = request.POST.get('start_date')
     end_date = request.POST.get('end_date')
 
-    # 3. If both dates were given, filter payments to that date range
+    # step 3: if both dates are given, filter the payments using that range
     if start_date and end_date:
         payments = payments.filter(created_at__date__range=[start_date, end_date])
 
-    # 4. Build up the list of orders with extra info attached
+    # step 4: now build the orders list with some extra info attached
     orders = []
     total_revenue = 0
 
     for payment in payments:
-        order = payment.order  # get the order linked to this payment
+        order = payment.order  # the order linked to this payment
 
-        # get all the items that belong to this order
+        # get all order items belonging to this order
         items = OrderItem.objects.filter(order=order)
 
-        # attach extra info onto the order object so the template can use it
+        # attaching extra stuff to the order object so template can use it directly
         order.items = items
         order.payment = payment
 
-        # add up the revenue
+        # keep adding to total revenue
         total_revenue += payment.amount
 
         orders.append(order)
 
-    # 5. Send everything to the template
+    # step 5: finally send everything to the template
     return render(request, 'Admin/orders.html', {
         'orders': orders,
         'total_revenue': total_revenue,
@@ -380,33 +356,27 @@ def orderDetails(request):
     })
 
 
-# ---------------------------------------------------
-# SHOW THE LOCATION REGISTER PAGE
-# ---------------------------------------------------
+# shows the location register page
 def LocationRegister(request):
     districts = District.objects.all()
     return render(request, 'admin/locationRegister.html', {'districts': districts})
 
 
-# ---------------------------------------------------
-# AJAX: GET ALL LOCATIONS FOR A GIVEN DISTRICT
-# (used to fill a dropdown without reloading the page)
-# ---------------------------------------------------
+# ajax call - gets all locations for the district picked
+# (used so the location dropdown updates without reloading page)
 def fillLocation(request):
-    did = request.POST.get('did')  # district id sent from the ajax call
+    did = request.POST.get('did')  # district id coming from the ajax request
 
-    # get all locations belonging to this district, as plain dictionaries
+    # getting all locations under this district, as plain dicts
     locations = Location.objects.filter(district_id=did).values()
 
-    # send back as JSON so javascript can use it
+    # sending back as json so js can use it on the other side
     return JsonResponse(list(locations), safe=False)
 
 
-# ---------------------------------------------------
-# AJAX: FILTER PRODUCTS BY CATEGORY
-# (used on a page where you click a category and products update
-#  without reloading the page)
-# ---------------------------------------------------
+# ajax call - filters products by category
+# (used on the page where products change when you pick a category,
+# without refreshing the whole page)
 def filter_products(request):
     category = request.GET.get('category')
 
@@ -415,7 +385,7 @@ def filter_products(request):
     else:
         products = Product.objects.filter(category_id=category)
 
-    # build a simple list of dictionaries (easy to convert to JSON)
+    # making a simple list of dicts so it can be turned into json easily
     data = []
     for p in products:
         data.append({
@@ -429,11 +399,9 @@ def filter_products(request):
     return JsonResponse(data, safe=False)
 
 
-# ---------------------------------------------------
-# LOGOUT
-# ---------------------------------------------------
+# logs the user out
 def logout(request):
-    # clear everything stored in the session (like loginId)
+    # this clears everything in session, like loginId
     request.session.flush()
 
     return redirect('login')

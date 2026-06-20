@@ -1,127 +1,86 @@
 {% extends "adminHeader.html" %}
-{% load static %}
 {% block content %}
 
 <style>
-    .minimal-wrapper {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 60vh;
-    }
-
-    .dropdown-box {
-        width: 100%;
-        max-width: 400px;
-        text-align: center;
-    }
-
-    .dropdown-label {
-        display: block;
-        font-family: 'Inter', sans-serif;
-        font-weight: 600;
-        color: #64748b;
-        margin-bottom: 15px;
-        font-size: 14px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    .minimal-select {
-        width: 100%;
-        padding: 16px 20px;
-        font-size: 18px;
-        font-family: 'Inter', sans-serif;
-        color: #1b4332;
-        border: 2px solid #e2e8f0;
-        border-radius: 12px;
-        background-color: #ffffff;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        appearance: none;
-        /* Custom arrow icon */
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%231b4332'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 20px center;
-        background-size: 20px;
-    }
-
-    .minimal-select:hover {
-        border-color: #1b4332;
-        box-shadow: 0 4px 12px rgba(27, 67, 50, 0.08);
-    }
-
-    .minimal-select:focus {
-        outline: none;
-        border-color: #1b4332;
-    }
+    .wrap { width: 90%; margin: 20px auto; font-family: sans-serif; }
+    .flex-container { display: flex; gap: 40px; }
+    .box { flex: 1; border: 1px solid #ccc; padding: 20px; border-radius: 8px; background: #fff; }
+    select, input { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #ccc; }
+    button { width: 100%; padding: 10px; background: #111827; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
 </style>
 
-<div class="minimal-wrapper">
-    <div class="dropdown-box">
-        <label class="dropdown-label">Select Working District</label>
-        
-        <!-- JavaScript onchange makes this act like a form without needing a button -->
-        <select class="minimal-select" id="districtid">
-            <option value="" disabled selected>Choose District...</option>
-            {% for dist in districts %}
-                <option value="{{ dist.district_id }}">{{ dist.name }}</option>
-            {% endfor %}
-        </select> <br><br>
+<div class="wrap">
+    <h2>Locations</h2>
+    
+    <div class="flex-container">
+        <div class="box">
+            <h3>Add Location</h3>
+            <form method="POST" action="{% url 'addlocation' %}">
+                {% csrf_token %}
+                <select name="district" required>
+                    <option value="" disabled selected>Choose District</option>
+                    {% for d in districts %}
+                        <option value="{{ d.district_id }}">{{ d.name }}</option>
+                    {% endfor %}
+                </select>
+                <input type="text" name="location" placeholder="Location Name" required>
+                <button type="submit">Save Location</button>
+            </form>
+        </div>
 
-        <table class="table" border="1">
-            <thead>
-                <tr>
-                    <th>SL No</th>
-                    <th>Location Name</th>
-                </tr>
-            </thead>
-            <tbody id="locations">
+        <div class="box">
+            <h3>Filter Directory</h3>
+            <select id="district-filter">
+                <option value="all">All Locations</option>
+                {% for d in districts %}
+                    <option value="{{ d.district_id }}">{{ d.name }}</option>
+                {% endfor %}
+            </select>
 
-            </tbody>
-    </table>
+            <table>
+                <thead>
+                    <tr>
+                        <th>SL No</th>
+                        <th>Location Name</th>
+                    </tr>
+                </thead>
+                <tbody id="locations-table">
+                    </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
-<script src="{% static 'jquery-3.7.1.min.js' %}"></script>
-
 <script>
-$(document).ready(function() {
+document.getElementById("district-filter").onchange = function() {
+    let distId = this.value;
 
-  $('#districtid').change(function () {
+    fetch("{% url 'filter_locations' %}?district=" + distId)
+        .then(response => response.json())
+        .then(data => {
+            let htmlRows = "";
+            
+            for (let i = 0; i < data.length; i++) {
+                htmlRows += "<tr>";
+                htmlRows += "<td>" + (i + 1) + "</td>";
+                htmlRows += "<td>" + data[i].location + "</td>";
+                htmlRows += "</tr>";
+            }
+            
+            if(data.length === 0) {
+                htmlRows = "<tr><td colspan='2' style='text-align:center; color:gray;'>No records found</td></tr>";
+            }
 
-    var districtid = $(this).val();
-
-    $.ajax({
-      type: "POST",
-      url: '{% url "filllocation" %}',
-      data: {
-        did: districtid,
-        csrfmiddlewaretoken: '{{ csrf_token }}'
-      },
-
-      success: function (data) {
-
-        $('#locations').empty();
-        var s = 1;
-
-        $.each(data, function (key, val) {
-
-          var row = '<tr>' +
-                    '<td>' + s++ + '</td>' +
-                    '<td>' + val.location + '</td>' +
-                    '</tr>';
-
-          $('#locations').append(row);
+            document.getElementById("locations-table").innerHTML = htmlRows;
         });
+};
 
-      }
-    });
-
-  });
-
-});
+// Fire filtering load immediately upon layout load window rendering
+window.onload = function() {
+    document.getElementById("district-filter").onchange();
+};
 </script>
+
 {% endblock %}
-
-

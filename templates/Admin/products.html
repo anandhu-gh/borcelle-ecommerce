@@ -104,10 +104,17 @@ img{
             <th>Name</th>
             <th>Price</th>
             <th>Stock</th>
+            <th>Actions</th>
         </tr>
     </thead>
 
     <tbody id="product-container">
+
+        <!--
+            this is the normal list of products that loads
+            when the page first opens (no ajax involved here,
+            just plain django template loop)
+        -->
 
         {% for p in product_details %}
         <tr>
@@ -119,6 +126,13 @@ img{
             <td>{{ p.ProductName }}</td>
             <td>₹{{ p.ProductPrice }}</td>
             <td>{{ p.stock }}</td>
+            <td>
+                <!-- just a normal link, clicking it goes straight to the edit page -->
+                <a href="{% url 'editproduct' p.ProductId %}" class="edit">Edit</a>
+
+                <!-- just a normal link, clicking it goes straight to the delete view -->
+                <a href="{% url 'deleteproduct' p.ProductId %}" class="delete">Delete</a>
+            </td>
         </tr>
         {% endfor %}
 
@@ -132,38 +146,55 @@ img{
 
 <script>
 
+// ---------------------------------------------------
+// THIS IS THE ONLY AJAX PART OF THE PAGE.
+// it runs when the admin picks a category from the dropdown.
+// it asks the server for matching products, and updates the
+// table without reloading the whole page.
+// ---------------------------------------------------
+
 document.getElementById("category").onchange = function(){
 
+    // get whichever category was picked from the dropdown
     let category = this.value;
 
+    // ask the server (filter_products view) for products in that category
     fetch("{% url 'filter_products' %}?category=" + category)
 
-    .then(response => response.json())
+        .then(function(response){
+            // turn the response we got back into normal javascript data
+            return response.json();
+        })
 
-    .then(data => {
+        .then(function(data){
 
-        let rows = "";
+            // we will build the new rows as one long string of html
+            let rows = "";
 
-        for(let i = 0; i < data.length; i++){
+            // go through every product the server sent back
+            for(let i = 0; i < data.length; i++){
 
-            rows += `
-            <tr>
-                <td>
-                    <img src="${data[i].image}" width="50">
-                </td>
+                // add a new table row for this product
+                rows += "<tr>";
 
-                <td>${data[i].name}</td>
+                rows += "<td><img src='" + data[i].image + "' width='50'></td>";
+                rows += "<td>" + data[i].name + "</td>";
+                rows += "<td>₹" + data[i].price + "</td>";
+                rows += "<td>" + data[i].stock + "</td>";
 
-                <td>₹${data[i].price}</td>
+                // NOTE: edit and delete links are left out here on purpose.
+                // the filtered rows only show product info. if you want
+                // edit/delete links here too, the filter_products view
+                // would need to send back the product id as well.
+                rows += "<td></td>";
 
-                <td>${data[i].stock}</td>
-            </tr>
-            `;
-        }
+                rows += "</tr>";
+            }
 
-        document.getElementById("product-container").innerHTML = rows;
+            // replace the old rows with the new filtered rows
+            document.getElementById("product-container").innerHTML = rows;
 
-    });
+        });
 
 };
 

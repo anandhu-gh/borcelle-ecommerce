@@ -6,35 +6,27 @@ from adminApp.models import District, Product, Category
 from customerApp.models import Cart, Order, OrderItem, Payment, Feedback
 
 
-# ---------------------------------------------------
-# CUSTOMER HOME PAGE
-# ---------------------------------------------------
+# customer home page
 def customerHome(request):
     return render(request, 'Customer/customerHome.html')
 
 
-# ---------------------------------------------------
-# ABOUT PAGE
-# ---------------------------------------------------
+# about page
 def aboutPage(request):
     return render(request, 'Customer/about.html')
 
 
-# ---------------------------------------------------
-# TERMS AND POLICY PAGE
-# ---------------------------------------------------
+# terms and policy page
 def termsandpolicyPage(request):
     return render(request, 'Customer/terms.html')
 
 
-# ---------------------------------------------------
-# SHOW LOGGED-IN CUSTOMER'S PROFILE
-# ---------------------------------------------------
+# shows the logged in customer's own profile
 def customerProfile(request):
-    # get the logged-in user's id from the session
+    # getting the logged in user id from session
     login_id = request.session.get('loginId')
 
-    # find their customer profile using that login id
+    # finding their customer details using that login id
     customer_details = Customer.objects.get(loginId_id=login_id)
 
     return render(request, 'Customer/customerProfile.html', {
@@ -42,9 +34,7 @@ def customerProfile(request):
     })
 
 
-# ---------------------------------------------------
-# SHOW LIST OF ALL PRODUCTS (customer-facing)
-# ---------------------------------------------------
+# shows all products on customer side
 def productsList(request):
     product_details = Product.objects.all()
     return render(request, 'Customer/productView.html', {
@@ -53,19 +43,16 @@ def productsList(request):
     })
 
 
-# ---------------------------------------------------
-# SHOW DETAILS OF ONE PRODUCT + ITS REVIEWS
-# ---------------------------------------------------
+# shows one product's details along with its reviews
 def productDetails(request, id, name):
     product = Product.objects.get(ProductId=id)
 
-    # get all feedback/reviews left for this product
+    # getting all the feedback/reviews for this product
     reviews = Feedback.objects.filter(product=product)
 
-    # NOTE: a normal customer should not be able to edit a product
-    # from this page. This POST block is left here in case it's used
-    # for something else, but it now actually updates the product
-    # correctly instead of saving empty changes.
+    # this part normally a customer shouldnt edit product from here,
+    # but keeping it as it was, just fixed it so it actually updates
+    # the product properly instead of saving nothing
     if request.method == "POST":
         p_name = request.POST.get('name')
         p_description = request.POST.get('description')
@@ -87,24 +74,20 @@ def productDetails(request, id, name):
     })
 
 
-# ---------------------------------------------------
-# SHOW ALL CATEGORIES (with their products preloaded)
-# ---------------------------------------------------
+# shows all categories with their products loaded already
 def allCategories(request):
-    # prefetch_related makes this faster by loading all related
-    # products in one go, instead of one query per category
+    # prefetch_related makes it faster, loads all products in one go
+    # instead of one query for each category one by one
     categories = Category.objects.prefetch_related('products').all()
     return render(request, 'Customer/allCategories.html', {'categories': categories})
 
 
-# ---------------------------------------------------
-# SHOW PRODUCTS BELONGING TO ONE CATEGORY
-# ---------------------------------------------------
+# shows products that belong to one category
 def categoryView(request, category_id, category_name=None):
     # find the category using its id
     category = Category.objects.get(category_id=category_id)
 
-    # get all products that belong to this category
+    # get all products under this category
     products = Product.objects.filter(category=category)
 
     return render(request, 'Customer/categoryView.html', {
@@ -113,14 +96,12 @@ def categoryView(request, category_id, category_name=None):
     })
 
 
-# ---------------------------------------------------
-# ADD A PRODUCT TO THE CART
-# ---------------------------------------------------
+# adds a product into the cart
 def addToCart(request, id):
     if request.method == "POST":
         login_id = request.session.get('loginId')
 
-        # must be logged in to add to cart
+        # has to be logged in first
         if not login_id:
             return HttpResponse("<script>alert('Please login first');window.location='/login'</script>")
 
@@ -128,18 +109,18 @@ def addToCart(request, id):
             customer = Customer.objects.get(loginId_id=login_id)
             product = Product.objects.get(ProductId=id)
 
-            # how many of this product to add (default 1)
+            # how many to add, default is 1 if not given
             qty = int(request.POST.get('quantity', 1))
 
-            # check if this product is already in the cart
+            # check if this product is already added in cart before
             cart_item = Cart.objects.filter(customer=customer, product=product).first()
 
             if cart_item:
-                # already in cart, just increase the quantity
+                # already there, so just increase the quantity
                 cart_item.quantity += qty
                 cart_item.save()
             else:
-                # not in cart yet, create a new cart entry
+                # not there yet, so add a new cart row
                 Cart.objects.create(
                     customer=customer,
                     product=product,
@@ -149,38 +130,34 @@ def addToCart(request, id):
             return HttpResponse("<script>alert('Added to Cart');window.location='/customer/cart/'</script>")
 
         except Exception:
-            # something went wrong (e.g. product not found)
+            # something went wrong somewhere (maybe product not found etc)
             return HttpResponse("<script>alert('Error occurred');window.location='/'</script>")
 
 
-# ---------------------------------------------------
-# REMOVE AN ITEM FROM THE CART
-# ---------------------------------------------------
+# removes one item from the cart
 def removeFromCart(request, id):
     cart_item = Cart.objects.get(cart_id=id)
     cart_item.delete()
 
-    return redirect('cart')  # goes back to the cart page
+    return redirect('cart')  # back to cart page
 
 
-# ---------------------------------------------------
-# VIEW THE CART (with totals)
-# ---------------------------------------------------
+# shows the cart with total price
 def viewCart(request):
-    # 1. get logged-in user's id
+    # 1. getting logged in user id
     login_id = request.session.get('loginId')
 
-    # 2. not logged in? send to login page
+    # 2. not logged in, send to login
     if not login_id:
         return redirect('login')
 
-    # 3. get the customer for this login
+    # 3. get the customer linked to this login
     customer = Customer.objects.get(loginId_id=login_id)
 
-    # 4. get all cart items belonging to this customer
+    # 4. get all cart items of this customer
     cart_items = Cart.objects.filter(customer=customer)
 
-    # 5. work out the price for each item, and the grand total
+    # 5. calculate price for each item, and the grand total
     total = 0
     for item in cart_items:
         item.item_total = item.product.ProductPrice * item.quantity
@@ -192,33 +169,29 @@ def viewCart(request):
     })
 
 
-# ---------------------------------------------------
-# SHOW THE CUSTOMER'S PAST ORDERS
-# ---------------------------------------------------
+# shows the customer's past orders
 def orderHistory(request):
-    # 1. get logged-in user's id from session
+    # 1. get login id from session
     login_id = request.session.get('loginId')
 
-    # 2. not logged in? send to login page
+    # 2. not logged in, send to login page
     if not login_id:
         return redirect('login')
 
-    # 3. find the customer linked to this login
+    # 3. find the customer for this login
     user = Customer.objects.get(loginId_id=login_id)
 
     # 4. get all their orders, newest first
     my_orders = Order.objects.filter(customer=user).order_by('-order_id')
 
-    # 5. send to the template
+    # 5. send to template
     return render(request, 'Customer/orderHistory.html', {
         'orders': my_orders,
         'user': user
     })
 
 
-# ---------------------------------------------------
-# SHOW CHECKOUT PAGE (cart summary before payment)
-# ---------------------------------------------------
+# shows the checkout page (cart summary before paying)
 def checkout(request):
     login_id = request.session.get('loginId')
 
@@ -240,9 +213,7 @@ def checkout(request):
     })
 
 
-# ---------------------------------------------------
-# SHOW PAYMENT PAGE
-# ---------------------------------------------------
+# shows the payment page
 def paymentPage(request):
     login_id = request.session.get('loginId')
 
@@ -252,11 +223,11 @@ def paymentPage(request):
     customer = Customer.objects.get(loginId_id=login_id)
     cart_items = Cart.objects.filter(customer=customer)
 
-    # add up total price of everything in the cart
+    # adding up the total price of cart
     total = sum(item.product.ProductPrice * item.quantity for item in cart_items)
 
-    # mark that checkout has started, so confirmPayment() knows
-    # this is a real checkout and not a random direct POST
+    # marking that checkout has started, so confirmPayment knows
+    # this is a real checkout and not someone randomly posting
     request.session['checkout_started'] = True
 
     return render(request, 'Customer/payment.html', {
@@ -265,12 +236,10 @@ def paymentPage(request):
     })
 
 
-# ---------------------------------------------------
-# CONFIRM PAYMENT (creates the order + payment, empties cart)
-# ---------------------------------------------------
+# confirms payment - this is where the order actually gets created
 def confirmPayment(request):
 
-    # this page should only be reached through a form POST
+    # this should only be reached by submitting the form
     if request.method != "POST":
         return redirect('cart')
 
@@ -278,31 +247,31 @@ def confirmPayment(request):
     if not login_id:
         return redirect('login')
 
-    # make sure the customer actually went through paymentPage() first
-    # (this stops someone from placing duplicate orders)
+    # making sure customer actually went through paymentPage first
+    # this stops duplicate orders from happening
     if not request.session.get('checkout_started'):
         return HttpResponse("<script>alert('Invalid checkout session');window.location='/cart'</script>")
 
     customer = Customer.objects.get(loginId_id=login_id)
     cart_items = Cart.objects.filter(customer=customer)
 
-    # nothing in the cart? go back
+    # nothing in cart, go back
     if not cart_items:
         return redirect('cart')
 
     total = sum(item.product.ProductPrice * item.quantity for item in cart_items)
 
-    # just grab last 4 digits of the "card number" for display purposes
+    # just taking last 4 digits of card number to show later
     card_number = request.POST.get('card_number')
     last4 = card_number[-4:] if card_number else "0000"
 
-    # create ONE order for this whole cart
+    # creating just ONE order for the whole cart
     order = Order.objects.create(
         customer=customer,
         total_amount=total
     )
 
-    # create one OrderItem per cart item, and reduce stock
+    # creating order items one by one, and reducing stock too
     for item in cart_items:
         OrderItem.objects.create(
             order=order,
@@ -313,7 +282,7 @@ def confirmPayment(request):
         item.product.stock -= item.quantity
         item.product.save()
 
-    # create the payment record for this order
+    # creating the payment record for this order
     Payment.objects.create(
         customer=customer,
         order=order,
@@ -321,10 +290,10 @@ def confirmPayment(request):
         card_last4=last4,
     )
 
-    # empty the cart now that the order is placed
+    # emptying the cart now since order is placed
     cart_items.delete()
 
-    # close the checkout session so it can't be reused
+    # closing the checkout session so it cant be reused again
     request.session['checkout_started'] = False
 
     return HttpResponse(
@@ -332,17 +301,15 @@ def confirmPayment(request):
     )
 
 
-# ---------------------------------------------------
-# EDIT CUSTOMER PROFILE
-# ---------------------------------------------------
+# edit customer profile
 def editProfile(request):
     login_id = request.session.get('loginId')
 
     customer = Customer.objects.get(loginId_id=login_id)
-    login = customer.loginId  # the related login account
+    login = customer.loginId  # related login account
 
     if request.method == "POST":
-        # update basic info
+        # updating basic details
         customer.phone = request.POST.get('phone')
         customer.email = request.POST.get('email')
         customer.location = request.POST.get('location')
@@ -353,17 +320,17 @@ def editProfile(request):
         new_password = request.POST.get('password')
         dist_id = request.POST.get('district')
 
-        # update district if one was chosen
+        # update district if one was selected
         if dist_id:
             customer.district = District.objects.get(district_id=dist_id)
 
-        # check that the new username isn't already used by someone else
+        # checking new username isnt already used by someone else
         if LoginDetails.objects.filter(username=new_username).exclude(loginId=login_id).exists():
             return HttpResponse("<script>alert('Username already exists');window.location='/customer/editprofile/'</script>")
 
         login.username = new_username
 
-        # only change password if a new one was typed in
+        # only change password if a new one was actually typed
         if new_password:
             login.password = new_password
             customer.password = new_password
@@ -375,7 +342,7 @@ def editProfile(request):
 
         return HttpResponse("<script>alert('Profile updated successfully');window.location='/customer/profile/'</script>")
 
-    # GET request: show the edit form with current details
+    # GET request - show the edit form with current details filled in
     districts = District.objects.all()
 
     return render(request, 'Customer/editProfile.html', {
@@ -384,9 +351,7 @@ def editProfile(request):
     })
 
 
-# ---------------------------------------------------
-# SUBMIT FEEDBACK FOR ITEMS IN AN ORDER
-# ---------------------------------------------------
+# submitting feedback for items in an order
 def submitFeedback(request, id):
     login_id = request.session.get('loginId')
 
@@ -394,16 +359,16 @@ def submitFeedback(request, id):
         customer = Customer.objects.get(loginId_id=login_id)
         order = Order.objects.get(order_id=id)
 
-        saved = 0  # count how many feedbacks we actually saved
+        saved = 0  # counting how many feedbacks we actually saved
 
-        # go through every item in this order
+        # going through every item in this order
         for item in order.orderitem_set.all():
 
-            # the form sends rating/message per item, using the item's id
+            # form sends rating and message per item using the item id
             rating = request.POST.get(f"rating_{item.order_item_id}")
             message = request.POST.get(f"message_{item.order_item_id}", "").strip()
 
-            # only save feedback if the customer actually entered something
+            # only save if customer actually wrote something
             if rating or message:
                 Feedback.objects.create(
                     customer=customer,
@@ -414,7 +379,7 @@ def submitFeedback(request, id):
                 )
                 saved += 1
 
-        # nothing was filled in at all
+        # nothing got filled in at all
         if saved == 0:
             return HttpResponse("""
                 <script>
@@ -430,5 +395,5 @@ def submitFeedback(request, id):
             </script>
         """)
 
-    # GET request: just go back to order history
+    # GET request - just go back to order history
     return redirect('orderhistory')
