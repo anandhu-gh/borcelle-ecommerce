@@ -18,7 +18,6 @@ urlpatterns = [
     path('deleteproduct/<int:id>/', views.deleteProduct, name='deleteproduct'),
 
     path('adminorders/', views.orderDetails, name='adminorders'),
-    path('adddistrict/', views.LocationRegister, name='adddistrict'),
     path('filllocation', views.fillLocation, name='filllocation'),
     path('filter-products/', views.filter_products, name='filter_products'),
 

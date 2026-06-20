@@ -142,7 +142,7 @@ def addLocation(request):
             # Direct historical referrer back-reload ensures popup renders completely 
             return HttpResponse("<script>alert('Location added successfully!!'); window.location.replace(document.referrer);</script>")
 
-    return render(request, 'Admin/registerLocation.html', {'districts': districts})
+    return render(request, 'Admin/locationRegister.html', {'districts': districts})
 
 
 def filter_locations(request):
@@ -356,10 +356,7 @@ def orderDetails(request):
     })
 
 
-# shows the location register page
-def LocationRegister(request):
-    districts = District.objects.all()
-    return render(request, 'admin/locationRegister.html', {'districts': districts})
+
 
 
 # ajax call - gets all locations for the district picked
