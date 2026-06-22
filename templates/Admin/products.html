@@ -3,147 +3,61 @@
 {% block content %}
 
 <style>
-
-.wrap{
-    width:95%;
-    margin:auto;
-}
-
-.top{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:20px;
-}
-
-.add{
-    background:#111827;
-    color:#fff;
-    padding:10px 16px;
-    border-radius:10px;
-    text-decoration:none;
-}
-
-select{
-    padding:10px;
-    border-radius:10px;
-    border:1px solid #ddd;
-    margin-bottom:20px;
-}
-
-.card{
-    background:#fff;
-    border-radius:14px;
-    overflow:hidden;
-    box-shadow:0 2px 10px rgba(0,0,0,.05);
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-}
-
-th,td{
-    padding:15px;
-    border-bottom:1px solid #eee;
-    text-align:left;
-}
-
-tr:hover{
-    background:#f9fafb;
-}
-
-img{
-    width:55px;
-    height:55px;
-    border-radius:10px;
-    object-fit:cover;
-}
-
-.edit{
-    color:#2563eb;
-    margin-right:10px;
-    text-decoration:none;
-}
-
-.delete{
-    color:#dc2626;
-    text-decoration:none;
-}
-
+.wrap{width:95%;margin:auto}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.add{background:#111827;color:#fff;padding:10px 16px;border-radius:10px;text-decoration:none}
+select{padding:10px;border-radius:10px;border:1px solid #ddd;margin-bottom:20px}
+.card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+table{width:100%;border-collapse:collapse}
+th,td{padding:15px;border-bottom:1px solid #eee;text-align:left}
+tr:hover{background:#f9fafb}
+img{width:55px;height:55px;border-radius:10px;object-fit:cover}
+.edit{color:#2563eb;margin-right:10px;text-decoration:none}
+.delete{color:#dc2626;text-decoration:none}
 </style>
 
 <div class="wrap">
-
     <div class="top">
-
         <h2>Products</h2>
-
-        <a href="{% url 'addproductform' %}" class="add">
-            + Add
-        </a>
-
+        <a href="{% url 'addproductform' %}" class="add"><i class="bi bi-plus"></i> Add Product</a>
     </div>
 
-   <select id="category">
-
-    <option value="all">All Categories</option>
-
-    {% for c in categories %}
-        <option value="{{ c.category_id }}">
-            {{ c.category_name }}
-        </option>
-    {% endfor %}
-
-</select>
-
-<table>
-    <thead>
-        <tr>
-            <th>Image</th>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Stock</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-
-    <tbody id="product-container">
-
-        <!--
-            this is the normal list of products that loads
-            when the page first opens (no ajax involved here,
-            just plain django template loop)
-        -->
-
-        {% for p in product_details %}
-        <tr>
-            <td>
-                {% if p.ProductImage %}
-                    <img src="{{ p.ProductImage.url }}" width="50">
-                {% endif %}
-            </td>
-            <td>{{ p.ProductName }}</td>
-            <td>₹{{ p.ProductPrice }}</td>
-            <td>{{ p.stock }}</td>
-            <td>
-                <!-- just a normal link, clicking it goes straight to the edit page -->
-                <a href="{% url 'editproduct' p.ProductId %}" class="edit">Edit</a>
-
-                <!-- just a normal link, clicking it goes straight to the delete view -->
-                <a href="{% url 'deleteproduct' p.ProductId %}" class="delete">Delete</a>
-            </td>
-        </tr>
+    <select id="category">
+        <option value="all">All Categories</option>
+        {% for c in categories %}
+            <option value="{{ c.category_id }}">{{ c.category_name }}</option>
         {% endfor %}
+    </select>
 
-    </tbody>
-</table>
-    </div>
-
+    <table>
+        <thead>
+            <tr><th>Image</th><th>Name</th><th>Price</th><th>Stock</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="product-container">
+            <!--
+                this is the normal list of products that loads
+                when the page first opens (no ajax involved here,
+                just plain django template loop)
+            -->
+            {% for p in product_details %}
+            <tr>
+                <td>{% if p.ProductImage %}<img src="{{ p.ProductImage.url }}" width="50">{% endif %}</td>
+                <td>{{ p.ProductName }}</td>
+                <td>₹{{ p.ProductPrice }}</td>
+                <td>{{ p.stock }}</td>
+                <td>
+                    <!-- just a normal link, clicking it goes straight to the edit page -->
+                    <a href="{% url 'editproduct' p.ProductId %}" class="edit">Edit</a>
+                    <!-- just a normal link, clicking it goes straight to the delete view -->
+                    <a href="{% url 'deleteproduct' p.ProductId %}" class="delete">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 <script src="{% static 'jquery-3.7.1.min.js' %}"></script>
-
 <script>
 
 // ---------------------------------------------------

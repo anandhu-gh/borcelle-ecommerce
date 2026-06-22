@@ -3,136 +3,63 @@
 {% block content %}
 
 <style>
-    .editorial-wrapper {
-        max-width: 1050px;
-        margin: 80px auto;
-        padding: 0 30px;
-        font-family: 'Segoe UI', system-ui, sans-serif;
-        color: #1e293b;
-    }
-
-    /* Clean Asymmetric Split Grid */
-    .split-grid {
-        display: grid;
-        grid-template-columns: 1fr 1.5fr;
-        gap: 60px;
-        align-items: start;
-    }
-
-    @media (max-width: 768px) {
+    .editorial-wrapper { max-width: 1100px; margin: 60px auto; padding: 0 15px; font-family: 'Inter', sans-serif; color: #334155; }
+    .split-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 60px; align-items: start; }
+    
+    @media (max-width: 850px) {
         .split-grid { grid-template-columns: 1fr; gap: 40px; }
+        .left-col { position: static !important; }
     }
 
-    /* Left Sticky Typography Column */
-    .left-col {
-        position: sticky;
-        top: 40px;
-    }
+    .left-col { position: sticky; top: 120px; }
+    .editorial-tag { font-size: 11px; text-transform: uppercase; letter-spacing: 3px; color: #1b4332; font-weight: 700; margin-bottom: 15px; display: block; }
+    .left-col h1 { font-family: 'Playfair Display', serif; font-size: 3.2rem; line-height: 1.15; font-weight: 700; color: #1b4332; margin-bottom: 25px; }
+    .left-col p { font-size: 1.1rem; line-height: 1.7; color: #64748b; }
 
-    .editorial-tag {
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 3px;
-        color: #1b4332;
-        font-weight: 700;
-        margin-bottom: 15px;
-        display: block;
-    }
-
-    .left-col h1 {
-        font-size: 48px;
-        line-height: 1.1;
-        font-weight: 800;
-        margin: 0 0 20px 0;
-        color: #0f172a;
-        letter-spacing: -1px;
-    }
-
-    .accent-bar {
-        width: 60px;
-        height: 4px;
-        background-color: #1b4332;
-    }
-
-    /* Right Continuous Narrative Column */
-    .right-col {
-        display: flex;
-        flex-direction: column;
-        gap: 50px;
-    }
-
-    .lead-paragraph {
-        font-size: 20px;
-        line-height: 1.6;
-        color: #475569;
-        font-weight: 400;
-        margin: 0;
-    }
-
-    .pillar-row {
-        border-top: 1px solid #e2e8f0;
-        padding-top: 25px;
-    }
-
-    .pillar-num {
-        font-size: 14px;
-        font-weight: 700;
-        color: #1b4332;
-        margin-bottom: 10px;
-    }
-
-    .pillar-title {
-        font-size: 22px;
-        font-weight: 600;
-        color: #0f172a;
-        margin-bottom: 15px;
-    }
-
-    .pillar-text {
-        font-size: 15px;
-        line-height: 1.7;
-        color: #64748b;
-        margin: 0;
-    }
+    .right-col p.lead-text { font-size: 1.3rem; line-height: 1.6; color: #1e293b; margin-bottom: 45px; font-weight: 500; font-family: 'Playfair Display', serif; }
+    
+    .pillar-row { margin-bottom: 40px; border-bottom: 1px solid #e2e8f0; padding-bottom: 30px; }
+    .pillar-row:last-child { border: none; }
+    .pillar-num { font-size: 10px; font-weight: 700; color: #74c69d; letter-spacing: 2px; margin-bottom: 8px; }
+    .pillar-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: #1b4332; margin-bottom: 12px; }
+    .pillar-text { font-size: 0.98rem; line-height: 1.7; color: #64748b; margin: 0; }
 </style>
 
 <div class="editorial-wrapper">
     <div class="split-grid">
         
-        <!-- Left Structural Column -->
         <div class="left-col">
-            <span class="editorial-tag">Who We Are</span>
-            <h1>The Concept Inside The Craft.</h1>
-            <div class="accent-bar"></div>
+            <span class="editorial-tag">The Architectural Legacy</span>
+            <h1>Borcelle Atelier</h1>
+            <p>Formulating balanced interior volume metrics for modern contemporary frameworks since inception.</p>
         </div>
 
-        <!-- Right Content Stream -->
         <div class="right-col">
-            <p class="lead-paragraph">
-                We believe standard living objects shouldn't just take up physical volume—they should anchor spaces and provide seamless architectural utility.
+            <p class="lead-text">
+                We design and handcraft luxury furniture under the absolute premise that everyday spatial assets must not merely occupy geometric volume—they should anchor spaces and provide flawless utility.
             </p>
 
             <div class="pillar-row">
-                <div class="pillar-num">// PILLAR 01</div>
-                <div class="pillar-title">📐 Structural Rigor</div>
+                <div class="pillar-num">// CORE CONFIGURATION THREAD 01</div>
+                <div class="pillar-title">📐 Uncompromising Structural Rigor</div>
                 <p class="pillar-text">
-                    Our catalog balances raw ergonomic parameters with aesthetic weightlessness. Every angle, depth, and choice of raw grain is intentional.
+                    Our dynamic design ledger meticulously evaluates raw ergonomic load metrics while matching fluid aesthetic configurations. Every grain selection, joining point, and depth specification operates by absolute intention.
                 </p>
             </div>
 
             <div class="pillar-row">
-                <div class="pillar-num">// PILLAR 02</div>
-                <div class="pillar-title">🌱 Sourced Traceability</div>
+                <div class="pillar-num">// CORE CONFIGURATION THREAD 02</div>
+                <div class="pillar-title">🌱 Verified Traceable Material Chains</div>
                 <p class="pillar-text">
-                    Greenwashing isn't our framework. We maintain simple, high-visibility chains with domestic harvesting suppliers to source renewable compounds.
+                    Superficial ecosystem labeling holds no value within our manufacturing pipeline. We sustain crystal-clear, audited partnerships with domestic forestry collectives to guarantee renewable log harvesting loops.
                 </p>
             </div>
 
             <div class="pillar-row">
-                <div class="pillar-num">// PILLAR 03</div>
-                <div class="pillar-title">✨ Timeline Narrative</div>
+                <div class="pillar-num">// CORE CONFIGURATION THREAD 03</div>
+                <div class="pillar-title">✨ Timeline Narrative Progression</div>
                 <p class="pillar-text">
-                    We originated as a specialized, individual blueprint studio. Over cycles of expansion, we've carefully transformed into an e-commerce venue that stays loyal to pure blueprint foundations.
+                    Borcelle originated inside an exclusive individual industrial blueprint workshop. Over multiple intentional iteration loops, we carefully integrated digital customer logistics networks while staying unswervingly loyal to pure blueprint craftsmanship origins.
                 </p>
             </div>
         </div>

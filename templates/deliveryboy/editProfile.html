@@ -2,219 +2,202 @@
 {% block content %}
 
 <style>
-
-.edit-card{
-    background:#fff;
-    border-radius:22px;
-    padding:30px;
-    border:1px solid #e5e7eb;
-    max-width:900px;
+.edit-card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 35px;
+    border: 1px solid #e2e8f0;
+    max-width: 850px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.01);
 }
 
-.top h2{
-    margin:0;
+.top h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #0f172a;
+    letter-spacing: -0.5px;
 }
 
-.top p{
-    margin-top:6px;
-    color:#64748b;
+.top p {
+    margin-top: 4px;
+    color: #64748b;
+    font-size: 14px;
 }
 
-/* FORM */
-.form-grid{
-    margin-top:24px;
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:18px;
+.note {
+    margin-top: 20px;
+    background: #f8fafc;
+    color: #475569;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.form-box{
-    display:flex;
-    flex-direction:column;
+.form-grid {
+    margin-top: 28px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
 }
 
-.form-box label{
-    margin-bottom:8px;
-    font-size:14px;
-    font-weight:500;
-    color:#475569;
+.form-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-box label {
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .form-box input,
-.form-box textarea{
-    border:1px solid #dbe2ea;
-    background:#f8fafc;
-    border-radius:14px;
-    padding:13px 14px;
-    outline:none;
-    transition:0.2s;
+.form-box textarea {
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 12px 16px;
+    outline: none;
+    font-size: 14px;
+    color: #0f172a;
+    transition: all 0.2s ease;
 }
 
-.form-box textarea{
-    resize:none;
-    height:110px;
+.form-box textarea {
+    resize: none;
+    height: 100px;
 }
 
 .form-box input:focus,
-.form-box textarea:focus{
-    border-color:#2563eb;
-    background:#fff;
+.form-box textarea:focus {
+    border-color: #0f172a;
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.06);
 }
 
-/* BUTTON */
-.btn-save{
-    margin-top:24px;
-    border:none;
-    background:#2563eb;
-    color:#fff;
-    padding:13px 22px;
-    border-radius:14px;
-    font-weight:600;
+.btn-save {
+    margin-top: 30px;
+    border: none;
+    background: #0f172a;
+    color: #ffffff;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s ease;
 }
 
-.btn-save:hover{
-    background:#1d4ed8;
+.btn-save:hover {
+    background: #1e293b;
 }
-
-/* NOTE */
-.note{
-    margin-top:18px;
-    background:#eff6ff;
-    color:#2563eb;
-    padding:14px 16px;
-    border-radius:14px;
-    font-size:14px;
-}
-
 </style>
 
 <div class="edit-card">
 
     <div class="top">
-
-        <h2>
-            Edit Profile
-        </h2>
-
-        <p>
-            Update account details and delivery information.
-        </p>
-
+        <h2>Edit Delivery Profile</h2>
+        <p>Update your personal details and contact information</p>
     </div>
 
     <div class="note">
-
-        <i class="bi bi-info-circle"></i>
-        Username must be unique and password should contain minimum 3 characters.
-
+        <i class="bi bi-exclamation-circle text-secondary"></i>
+        <span>Username must be unique. Password must be at least 3 characters long</span>
     </div>
 
     <form method="POST">
-
         {% csrf_token %}
 
         <div class="form-grid">
-
             <!-- NAME -->
             <div class="form-box">
-
                 <label>Full Name</label>
-
                 <input 
                     type="text"
                     name="name"
-                    value="{{deliveryboy.name}}"
+                    value="{{ deliveryboy.name }}"
                     required
                     pattern="[A-Za-z ]{3,50}"
-                    title="Enter valid name"
+                    title="Enter valid identity string"
                 >
-
             </div>
 
             <!-- USERNAME -->
             <div class="form-box">
-
                 <label>Username</label>
-
                 <input 
                     type="text"
                     name="username"
-                    value="{{deliveryboy.username}}"
+                    value="{{ deliveryboy.username }}"
                     required
                     pattern="[A-Za-z0-9_]{4,20}"
-                    title="Username must be 4 to 20 characters"
+                    title="Security aliases require 4 to 20 alpha-numeric characters"
                 >
-
             </div>
 
             <!-- EMAIL -->
             <div class="form-box">
-
                 <label>Email Address</label>
-
                 <input 
                     type="email"
                     name="email"
-                    value="{{deliveryboy.email}}"
+                    value="{{ deliveryboy.email }}"
                     required
                 >
-
             </div>
 
             <!-- PHONE -->
             <div class="form-box">
-
-                <label>Phone Number</label>
-
+                <label>Contact Number</label>
                 <input 
                     type="text"
                     name="phone"
-                    value="{{deliveryboy.phone}}"
+                    value="{{ deliveryboy.phone }}"
                     required
                     pattern="[0-9]{10}"
-                    title="Enter valid 10 digit phone number"
+                    title="Enter standard 10 digit communication sequence"
                 >
-
             </div>
 
             <!-- ADDRESS -->
-            <div class="form-box" style="grid-column:1/-1;">
-
-                <label>Address</label>
-
+            <div class="form-box" style="grid-column: 1 / -1;">
+                <label>Full Address</label>
                 <textarea 
                     name="address"
                     required
                     minlength="5"
-                >{{deliveryboy.address}}</textarea>
-
+                >{{ deliveryboy.address }}</textarea>
             </div>
 
             <!-- NEW PASSWORD -->
             <div class="form-box">
-
-                <label>New Password</label>
-
+                <label>Password</label>
                 <input 
                     type="password"
                     name="new_password"
                     required
-                    value="{{deliveryboy.password}}"
+                    value="{{ deliveryboy.password }}"
                     pattern=".{3,6}"
-                    title="Password must contain minimum 3 characters"
+                    title="Secret hashes require a complexity density of 3-6 items"
                 >
-
             </div>
-
         </div>
 
         <button type="submit" class="btn-save">
-
-            <i class="bi bi-check-circle"></i>
-            Save Changes
-
+            <i class="bi bi-check-circle-fill"></i> Save Changes
         </button>
-
+        &nbsp;&nbsp;<a href="{% url 'deleiveryprofile' %}" style="all: unset; display: inline-block; padding: 12px 22px; font-family: sans-serif; font-size: 16px; font-weight: 600; color: #fff; background: #dc3545; border-radius: 10px; cursor: pointer; text-align: center;">Cancel</a>
     </form>
 
 </div>

@@ -3,208 +3,79 @@
 {% block content %}
 
 <style>
+  /* Base Variables & Structural Resets */
+  :root { --p-green: #1b4332; --text-dark: #0f172a; --text-muted: rgba(0,0,0,0.6); }
+  .f-center { display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .fluid-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
 
-.hero {
-  height: 82vh;
-  position: relative;
-  overflow: hidden;
-}
+  /* Hero Section */
+  .hero { height: 75vh; position: relative; overflow: hidden; }
+  .overlay { 
+    position: absolute; inset: 0; display: flex; align-items: center; padding: 0 10%;
+    background: linear-gradient(to right, rgba(0,0,0,0.75), rgba(0,0,0,0.2)); color: white; 
+  }
+  .overlay h1 { font-family: 'Playfair Display', serif; font-size: 4rem; margin: 0; }
+  .overlay p { margin-top: 15px; max-width: 460px; font-size: 1.1rem; line-height: 1.6; opacity: 0.85; }
 
-.hero img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+  /* Structural Image Grid */
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 6px 0; }
+  .tile { height: 30vh; overflow: hidden; filter: contrast(1.05) saturate(0.95); }
+  .tile:hover .fluid-img { transform: scale(1.05); }
 
-.overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  padding-left: 9%;
-  background: linear-gradient(to right, rgba(0,0,0,0.72), rgba(0,0,0,0.18));
-  color: white;
-}
+  /* Text & Column Strips */
+  .welcome { padding: 80px 10%; }
+  .welcome h2 { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--p-green); margin-bottom: 12px; }
+  .welcome p { max-width: 600px; line-height: 1.8; color: var(--text-muted); }
 
-.content h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 4rem;
-  margin: 0;
-  letter-spacing: 0.5px;
-}
+  .strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; padding: 60px 10%; border-top: 1px solid rgba(0,0,0,0.06); }
+  .box h4 { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--p-green); margin-bottom: 8px; }
+  .box p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
 
-.content p {
-  margin-top: 14px;
-  max-width: 460px;
-  font-size: 1.05rem;
-  line-height: 1.7;
-  opacity: 0.82;
-}
-
-.links {
-  display: flex;
-  gap: 20px;
-  margin-top: 26px;
-  flex-wrap: wrap;
-}
-
-.links a {
-  font-size: 13px;
-  text-decoration: none;
-  color: rgba(255,255,255,0.75);
-  transition: 0.2s;
-}
-
-.links a:hover {
-  color: #fff;
-}
-
-/* GRID */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-  margin-top: 6px;
-}
-
-.tile {
-  height: 33vh;
-  overflow: hidden;
-}
-
-.tile img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: 0.5s ease;
-  filter: contrast(1.05) saturate(0.95);
-}
-
-.tile:hover img {
-  transform: scale(1.05);
-}
-
-/* WELCOME SECTION */
-.welcome {
-  padding: 85px 10%;
-  text-align: center;
-}
-
-.welcome h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 2.2rem;
-  margin-bottom: 12px;
-  color: #1b4332;
-}
-
-.welcome p {
-  max-width: 600px;
-  margin: 0 auto;
-  font-size: 1rem;
-  line-height: 1.8;
-  opacity: 0.65;
-}
-
-/* BOTTOM STRIP (DIV BASED CLEAN LAYOUT) */
-.bottom-strip {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  padding: 60px 10%;
-  border-top: 1px solid rgba(0,0,0,0.06);
-}
-
-.bottom-box {
-  text-align: center;
-  padding: 10px 15px;
-}
-
-.bottom-box h4 {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.1rem;
-  margin-bottom: 10px;
-  color: #1b4332;
-}
-
-.bottom-box p {
-  font-size: 0.9rem;
-  opacity: 0.6;
-  line-height: 1.6;
-}
-
-/* FOOTER */
-.footer {
-  text-align: center;
-  padding: 25px;
-  font-size: 12px;
-  opacity: 0.4;
-  border-top: 1px solid rgba(0,0,0,0.05);
-}
-
+  .footer { padding: 25px; font-size: 12px; opacity: 0.4; border-top: 1px solid rgba(0,0,0,0.05); }
 </style>
 
-<!-- HERO -->
+<!-- HERO CONTEXT -->
 <div class="hero">
-  <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0">
-
+  <img class="fluid-img" src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0">
   <div class="overlay">
-    <div class="content">
+    <div>
       <h1>Borcelle</h1>
-      <p>
-        Welcome to a quiet space of furniture and design inspiration.
-        A calm introduction to form, light, and material.
-      </p>
-
+      <p>Welcome to a quiet space of furniture and design inspiration. A calm introduction to form, light, and material.</p>
     </div>
   </div>
 </div>
 
-<!-- IMAGE GRID -->
+<!-- ARCHITECTURAL VISUAL TILES -->
 <div class="grid">
-  <div class="tile">
-    <img src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6">
-  </div>
-
-  <div class="tile">
-    <img src="https://images.unsplash.com/photo-1630585308572-f53438fc684f">
-  </div>
-
-  <div class="tile">
-    <img src="https://images.unsplash.com/photo-1604578762246-41134e37f9cc">
-  </div>
+  <div class="tile"><img class="fluid-img" src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6"></div>
+  <div class="tile"><img class="fluid-img" src="https://images.unsplash.com/photo-1630585308572-f53438fc684f"></div>
+  <div class="tile"><img class="fluid-img" src="https://images.unsplash.com/photo-1604578762246-41134e37f9cc"></div>
 </div>
 
-<!-- WELCOME -->
-<div class="welcome">
+<!-- INTRODUCTION NODE -->
+<div class="welcome f-center">
   <h2>A calm introduction</h2>
-  <p>
-    This space is not about products or transactions.
-    It is about observing form, balance, and quiet design thinking.
-  </p>
+  <p>This space is not about products or transactions. It is about observing form, balance, and quiet design thinking.</p>
 </div>
 
-<!-- BOTTOM STRIP -->
-<div class="bottom-strip">
-
-  <div class="bottom-box">
+<!-- MINIMALIST VALUE COLUMNS -->
+<div class="strip">
+  <div class="box f-center">
     <h4>Design</h4>
     <p>Simple forms shaped by clarity and intention.</p>
   </div>
-
-  <div class="bottom-box">
+  <div class="box f-center">
     <h4>Experience</h4>
     <p>Explore visuals at your own pace without pressure.</p>
   </div>
-
-  <div class="bottom-box">
+  <div class="box f-center">
     <h4>Atmosphere</h4>
     <p>A quiet environment focused on mood and space.</p>
   </div>
-
 </div>
 
-<!-- FOOTER -->
-<div class="footer">
+<!-- ATTRIBUTION FOOTER -->
+<div class="footer f-center">
   © Borcelle — Designed for calm living
 </div>
 

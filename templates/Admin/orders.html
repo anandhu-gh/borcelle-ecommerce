@@ -1,215 +1,47 @@
 {% extends "adminHeader.html" %}
 {% block content %}
-
 <style>
-.orders-page {
-    max-width: 1100px;
-    margin: 40px auto;
-    font-family: Arial, sans-serif;
-}
-
-.orders-title {
-    display: inline-block;
-    font-size: 28px;
-    margin-bottom: 15px;
-    color: #1b4332;
-}
-
-/* order card */
-.order-card {
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 12px;
-    margin-bottom: 25px;
-    padding: 20px;
-    box-shadow: 0 5px 12px rgba(0,0,0,0.04);
-}
-
-/* header */
-.order-header {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    margin-bottom: 15px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-}
-
-.order-header span {
-    font-size: 14px;
-    color: #374151;
-}
-
-/* products */
-.product-row {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 10px 0;
-    border-bottom: 1px dashed #eee;
-}
-
-.product-row:last-child {
-    border-bottom: none;
-}
-
-.prod-img {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 6px;
-}
-
-.product-info {
-    flex: 1;
-}
-
-.product-name {
-    font-weight: 600;
-    color: #1b4332;
-}
-
-.product-meta {
-    font-size: 13px;
-    color: #6b7280;
-}
-
-/* status badge */
-.status-paid {
-    background: #dcfce7;
-    color: #16a34a;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-/* empty */
-.empty-box {
-    text-align: center;
-    padding: 60px;
-    color: #64748b;
-}
+    .orders-container { max-width: 950px; margin: 0 auto; }
+    .page-title { font-size: 24px; font-weight: 700; color: #0f172a; margin-bottom: 24px; }
+    .order-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+    .order-header { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; padding-bottom: 14px; border-bottom: 1px solid #f1f5f9; margin-bottom: 16px; font-size: 13px; color: #475569; }
+    .product-row { display: flex; align-items: center; gap: 16px; padding: 10px 0; border-bottom: 1px solid #fafafa; }
+    .product-row:last-child { border: none; }
+    .prod-img { width: 50px; height: 50px; border-radius: 6px; object-fit: cover; border: 1px solid #e2e8f0; }
+    .product-info { flex-grow: 1; }
+    .product-name { font-weight: 600; color: #0f172a; font-size: 14px; }
+    .product-meta { font-size: 13px; color: #64748b; margin-top: 2px; }
+    .status-paid { font-weight: 700; color: #16a34a; text-transform: uppercase; }
+    .empty-box { text-align: center; background: #ffffff; border: 1px solid #e2e8f0; padding: 40px; border-radius: 12px; color: #64748b; }
 </style>
 
-<div class="orders-page">
+<div class="orders-container">
+    <h2 class="page-title">Confirmed Transactions Manifest</h2>
 
-   <div style="display: flex; justify-content: flex-start; align-items: center; gap: 5px; margin-bottom: 20px;">
-
-    <h2 class="orders-title" style="margin: 0;">
-        📦 Orders
-    </h2>
-
-    <div class="total-revenue"
-         style="
-            background: rgba(255, 255, 255, 0);
-            color: black;
-            padding: 8px 14px;
-            display: inline-block;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
-         ">
-        💰 Total Revenue: ₹{{ total_revenue }}
-    </div>
-
-    <div style="margin-left: auto; display:flex; align-items:center;">
-
-    <form method="POST" style="display:flex; gap:8px; align-items:center;">
-        {% csrf_token %}
-
-        <input type="date"
-               name="start_date"
-               value="{{ start_date }}"
-               style="padding:6px; border:1px solid #ccc; border-radius:6px;">
-
-        <span>→</span>
-
-        <input type="date"
-               name="end_date"
-               value="{{ end_date }}"
-               style="padding:6px; border:1px solid #ccc; border-radius:6px;">
-
-        <button type="submit"
-                style="padding:6px 12px; background:#1b4332; color:white; border:none; border-radius:6px; cursor:pointer;">
-            Filter
-        </button>
-        <a href="{% url 'adminorders' %}"
-        style="padding:6px 12px; background:#ccc; color:black; border-radius:6px; text-decoration:none; display:inline-block;">
-        Reset
-        </a>
-
-    </form>
-
-</div>
-
-</div>
-
-    {% if orders %}
-
-        {% for order in orders %}
-
+    {% if data %}
+        {% for order in data %}
         <div class="order-card">
-
-            <!-- ORDER HEADER -->
             <div class="order-header">
-                <span><b>Order ID:</b> #{{ order.order_id }}</span>
-
-                <span>
-                    <b>Payment ID:</b>
-                    {% if order.payment %}
-                        {{ order.payment.payment_id }}
-                    {% else %}
-                        N/A
-                    {% endif %}
-                </span>
-
-                <span><b>Customer:</b> {{ order.customer.name }}</span>
-
-                <span><b>Username:</b> {{ order.customer.username }}</span>
-
-                <span><b>Total:</b> ₹{{ order.total_amount }}</span>
-
-                <span class="status-paid">
-                    {% if order.payment %}
-                        {{ order.payment.status }}
-                    {% endif %}
-                </span>
+                <div><b>System Master ID:</b> #{{ order.master_id }}</div>
+                <div><b>Payment Reference ID:</b> <span>{% if order.payment %}{{ order.payment.payment_id }}{% else %}N/A{% endif %}</span></div>
+                <div><b>Purchaser Account:</b> {{ order.customer.name }}</div>
+                <div><b>Gross Total:</b> <span class="fw-bold text-dark">₹{{ order.total_amount }}</span></div>
+                <div><b>Transaction Status:</b> <span class="status-paid">{% if order.payment %}{{ order.payment.status }}{% endif %}</span></div>
             </div>
 
-            <!-- PRODUCTS -->
             {% for item in order.items %}
             <div class="product-row">
-
                 <img src="{{ item.product.ProductImage.url }}" class="prod-img">
-
                 <div class="product-info">
-                    <div class="product-name">
-                        {{ item.product.ProductName }}
-                    </div>
-
-                    <div class="product-meta">
-                        Qty: {{ item.quantity }} |
-                        Price: ₹{{ item.price }}
-                    </div>
+                    <div class="product-name">{{ item.product.ProductName }}</div>
+                    <div class="product-meta">Dispatched Shipment Unit Quantity: {{ item.quantity }} | Unit Rate: ₹{{ item.price }}</div>
                 </div>
-
             </div>
             {% endfor %}
-
         </div>
-
         {% endfor %}
-
-        
     {% else %}
-
-        <div class="empty-box">
-            No confirmed orders found 📭
-        </div>
-
+        <div class="empty-box">No confirmed orders found inside the records file data registry system. 📭</div>
     {% endif %}
-
 </div>
-
 {% endblock %}

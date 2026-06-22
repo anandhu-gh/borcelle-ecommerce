@@ -1,94 +1,141 @@
 {% extends "customerHeader.html" %}
 {% block content %}
 
-<div class="pay-wrap">
-
-    <h2>Payment</h2>
-
-    <!-- ONLY IMPORTANT DATA -->
-    <div class="pay-box">
-        <h3>Total Amount</h3>
-        <h1>₹{{ total }}</h1>
-    </div>
-
-    <!-- PAYMENT FORM -->
-    <form method="POST" action="{% url 'confirmpayment' %}" class="pay-box">
-        {% csrf_token %}
-
-        <label>Payment Method</label>
-<select name="method" required>
-    <option value="">Select Payment Method</option>
-    <option value="Credit Card">Credit Card</option>
-    <option value="Debit Card">Debit Card</option>
-</select>
-
-<label>Card Number</label>
-<input
-    type="text"
-    name="card_number"
-    required
-    maxlength="16"
-    minlength="16"
-    pattern="[0-9]{16}"
-    title="Enter a valid 16-digit card number">
-
-<label>Expiry</label>
-<input
-    type="text"
-    name="expiry"
-    required
-    placeholder="MM/YY"
-    pattern="(0[1-9]|1[0-2])\/([0-9]{2})"
-    title="Format: MM/YY">
-
-<label>CVV</label>
-<input
-    type="password"
-    name="cvv"
-    required
-    maxlength="3"
-    minlength="3"
-    pattern="[0-9]{3}"
-    title="Enter a valid 3-digit CVV">
-
-<button type="submit">Confirm Purchase</button>
-    </form>
-
-</div>
-
 <style>
-.pay-wrap {
-    max-width: 400px;
-    margin: 60px auto;
+.payment-card {
+    max-width: 450px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,.08);
+    font-family: Arial, sans-serif;
+}
+
+.payment-card h2 {
     text-align: center;
-    font-family: Arial;
-}
-
-.pay-box {
-    border: 1px solid #ddd;
-    padding: 20px;
-    margin-bottom: 20px;
-}
-
-h1 {
     color: #1b4332;
-    margin: 10px 0;
+    margin: 0;
 }
 
-input, select {
-    width: 100%;
-    padding: 10px;
-    margin: 8px 0;
+.payment-card .amount {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: #1b4332;
+    margin: 15px 0 25px;
 }
 
-button {
+.payment-card input,
+.payment-card select,
+.payment-card button {
     width: 100%;
     padding: 12px;
+    margin-top: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 15px;
+}
+
+.payment-row {
+    display: flex;
+    gap: 10px;
+}
+
+.payment-row div {
+    width: 50%;
+}
+
+.payment-card button {
     background: #1b4332;
     color: white;
     border: none;
+    font-weight: bold;
     cursor: pointer;
+    margin-top: 18px;
+}
+
+.payment-card button:hover {
+    background: #123024;
 }
 </style>
+
+
+<div class="payment-card">
+
+    <h2>Secure Payment</h2>
+
+    <div class="amount">
+        ₹{{ total }}
+    </div>
+
+    <form method="POST" action="{% url 'confirmpayment' %}">
+        {% csrf_token %}
+
+        <!-- Payment Method -->
+        <select name="method" required>
+            <option value="" disabled selected>
+                Select Payment Method
+            </option>
+            <option value="Credit Card">
+                Credit Card
+            </option>
+            <option value="Debit Card">
+                Debit Card
+            </option>
+        </select>
+
+
+        <!-- 12-digit Card Number -->
+        <input 
+            type="text"
+            name="card_number"
+            placeholder="Card Number (12 digits)"
+            required
+            pattern="[0-9]{12}"
+            maxlength="12"
+            minlength="12"
+            title="Card number must contain exactly 12 digits">
+
+
+        <div class="payment-row">
+
+            <!-- Expiry Date -->
+            <div>
+                <input 
+                    type="text"
+                    name="expiry"
+                    placeholder="MM/YY"
+                    required
+                    pattern="(0[1-9]|1[0-2])\/[0-9]{2}"
+                    maxlength="5"
+                    title="Enter expiry date in MM/YY format">
+            </div>
+
+
+            <!-- CVV -->
+            <div>
+                <input 
+                    type="password"
+                    name="cvv"
+                    placeholder="CVV"
+                    required
+                    pattern="[0-9]{3}"
+                    maxlength="3"
+                    minlength="3"
+                    title="CVV must contain exactly 3 digits">
+            </div>
+
+        </div>
+
+        <button type="submit">
+            Confirm Payment
+        </button>
+
+    </form>
+
+</div>
 
 {% endblock %}

@@ -3,102 +3,67 @@
 {% block content %}
 
 <style>
-.cat-page-header { text-align: center; margin-bottom: 40px; }
-.cat-page-header h1 { font-family: 'Playfair Display', serif; font-size: 2.8rem; color: #1b4332; font-weight: 700; margin-bottom: 10px; }
-.cat-page-header p { color: #718096; }
+.cat-page-header { text-align: center; margin: 30px 0 50px; }
+.cat-page-header h1 { font-family: 'Playfair Display', serif; font-size: 3rem; color: #1b4332; font-weight: 700; }
+.cat-page-header p { color: #718096; font-size: 1.1rem; }
 
-/* Sticky Nav */
 .cat-nav-wrapper {
-  position: sticky; top: 75px; z-index: 900;
-  background: rgba(248, 250, 252, 0.9); backdrop-filter: blur(10px);
-  padding: 15px 0; margin-bottom: 40px; border-bottom: 1px solid #e2e8f0;
+  position: sticky; top: 70px; z-index: 900;
+  background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px);
+  padding: 16px 0; margin-bottom: 50px; border-bottom: 1px solid #e2e8f0;
 }
 
-.cat-nav {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding: 10px;
-  white-space: nowrap;
-  justify-content: center;
-}
-
+.cat-nav { display: flex; gap: 14px; overflow-x: auto; padding: 5px; justify-content: center; }
 .cat-nav-link {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-
-  padding: 6px 12px;
-  border-radius: 20px;
-  background: #fff;
-  border: 1px solid #e2e2e2;
-
-  text-decoration: none;
-  color: #333;
-  font-size: 13px;
-
-  flex-shrink: 0;
+  display: flex; align-items: center; gap: 8px; padding: 10px 22px; border-radius: 30px;
+  background: #ffffff; border: 1px solid #cbd5e1; color: #475569; text-decoration: none;
+  font-weight: 500; font-size: 0.95rem; transition: all 0.2s ease;
 }
+.cat-nav-link:hover { border-color: #1b4332; color: #1b4332; background: #f0fdf4; }
+.cat-nav-link img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
 
-.cat-nav-link img {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-/* Sections */
-.cat-section { margin-bottom: 80px; }
+.cat-section { margin-bottom: 70px; scroll-margin-top: 160px; }
 .cat-section-header {
   display: flex; justify-content: space-between; align-items: flex-end;
   border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 30px;
 }
-.cat-section-header h2 { font-family: 'Playfair Display', serif; font-size: 2rem; color: #1b4332; margin: 0; }
-.cat-section-header span { font-size: 13px; font-weight: 600; color: #a0aec0; letter-spacing: 1px; }
+.cat-section-header h2 { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: #1b4332; margin: 0; }
+.cat-section-header span { font-size: 0.85rem; font-weight: 700; color: #94a3b8; letter-spacing: 1px; }
 
-/* Grid */
-.cat-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px;
-}
+.cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
 .cat-item-card {
-  background: #fff; border-radius: 12px; border: 1px solid #edf2f7;
-  overflow: hidden; text-decoration: none; color: inherit;
-  transition: transform 0.3s, box-shadow 0.3s; display: block;
+  background: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0;
+  text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: all 0.3s ease;
 }
-.cat-item-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.06); }
-.cat-item-img { aspect-ratio: 1/1; background: #f1f5f9; overflow: hidden; }
-.cat-item-img img { width: 100%; height: 100%; object-fit: cover; }
-.cat-item-body { padding: 16px; }
-.cat-item-body h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; color: #2d3748; }
-.cat-item-body .price { font-weight: 700; color: #1b4332; font-size: 14px; }
-.cat-empty { grid-column: 1 / -1; padding: 40px; text-align: center; background: #fff; border-radius: 12px; border: 1px dashed #cbd5e1; color: #718096; }
+.cat-item-card:hover { transform: translateY(-6px); box-shadow: 0 15px 30px rgba(0,0,0,0.06); border-color: #1b4332; }
+.cat-item-img { width: 100%; height: 280px; overflow: hidden; background: #f8fafc; }
+.cat-item-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+.cat-item-card:hover .cat-item-img img { transform: scale(1.05); }
+
+.cat-item-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+.cat-item-body h4 { font-size: 1.15rem; font-weight: 600; color: #1e293b; margin-bottom: 8px; line-height: 1.4; }
+.cat-item-body .price { font-size: 1.3rem; font-weight: 700; color: #1b4332; }
 </style>
 
-<div class="container">
-  <div class="cat-page-header">
-    <h1>Our Departments</h1>
-    <p>Organized collections to easily find exactly what you're looking for.</p>
-  </div>
+<div class="container cat-page-header">
+  <h1>Product Architecture</h1>
+  <p>Browse through our meticulously engineered interior category archetypes.</p>
 </div>
 
 <div class="cat-nav-wrapper">
   <div class="container">
- <div class="cat-nav">
-  {% for category in categories %}
-    <!-- We pass both the ID and the slugified Name to the URL -->
-    <a href="{% url 'categoryview' category.category_id category.category_name|slugify %}" class="cat-nav-link">
-
-      {% if category.category_image %}
-        <img src="{{ category.category_image.url }}" alt="{{ category.category_name }}">
-      {% else %}
-        <img src="https://via.placeholder.com/40" alt="placeholder">
-      {% endif %}
-
-      <span class="cat-name">{{ category.category_name }}</span>
-
-    </a>
-  {% endfor %}
-</div>
+    <div class="cat-nav">
+      {% for category in categories %}
+        <a href="#cat-{{ forloop.counter }}" class="cat-nav-link">
+          {% if category.category_image %}
+            <img src="{{ category.category_image.url }}" alt="{{ category.category_name }}">
+          {% else %}
+            <img src="https://images.unsplash.com/photo-1538688525198-9b88f6f53126?q=80&w=120" alt="Placeholder">
+          {% endif %}
+          <span>{{ category.category_name }}</span>
+        </a>
+      {% endfor %}
+    </div>
   </div>
 </div>
 
@@ -107,7 +72,7 @@
   <div class="cat-section" id="cat-{{ forloop.counter }}">
     <div class="cat-section-header">
       <h2>{{ category.category_name }}</h2>
-      <span>{{ category.products.count }} PRODUCTS</span>
+      <span>{{ category.products.count }} AVAILABLE PIECES</span>
     </div>
     
     <div class="cat-grid">
@@ -117,7 +82,7 @@
           {% if product.ProductImage %}
             <img src="{{ product.ProductImage.url }}" alt="{{ product.ProductName }}">
           {% else %}
-            <img src="https://via.placeholder.com/400?text=No+Image">
+            <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=600" alt="No Asset View">
           {% endif %}
         </div>
         <div class="cat-item-body">
@@ -125,10 +90,6 @@
           <div class="price">₹{{ product.ProductPrice }}</div>
         </div>
       </a>
-      {% empty %}
-      <div class="cat-empty">
-        <p class="mb-0">New items arriving soon to this category.</p>
-      </div>
       {% endfor %}
     </div>
   </div>

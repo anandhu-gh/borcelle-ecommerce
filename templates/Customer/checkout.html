@@ -1,217 +1,171 @@
 {% extends "customerHeader.html" %}
+
 {% block content %}
 
 <style>
-
-/* ✅ FULL ISOLATION */
-.checkout-page {
-    max-width: 1100px;
-    margin: 50px auto;
-    padding: 20px;
-    font-family: 'Inter', sans-serif;
+.checkout{
+    max-width:1100px;
+    margin:40px auto;
+    font-family:Arial;
 }
 
-/* ONLY affect checkout */
-.checkout-page * {
-    box-sizing: border-box;
+.grid{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:25px;
 }
 
-/* Title */
-.checkout-page .co-title {
-    font-size: 30px;
-    font-weight: 700;
-    color: #1b4332;
-    margin-bottom: 20px;
+.card{
+    border:1px solid #ddd;
+    border-radius:12px;
+    padding:20px;
+    margin-bottom:20px;
 }
 
-/* Layout */
-.checkout-page .co-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 25px;
+h1,h2{
+    color:#1b4332;
 }
 
-/* Cards */
-.checkout-page .co-card {
-    border: 1px solid #e2e8f0;
-    border-radius: 15px;
-    padding: 20px;
-    background: #fff;
-    margin-bottom: 20px;
+table{
+    width:100%;
+    border-collapse:collapse;
 }
 
-.checkout-page .co-card h3 {
-    margin-bottom: 10px;
-    color: #1b4332;
+th,td{
+    padding:10px;
+    border-bottom:1px solid #eee;
+    text-align:left;
 }
 
-/* Table */
-.checkout-page .co-table {
-    width: 100%;
-    border-collapse: collapse;
+.row{
+    display:flex;
+    justify-content:space-between;
+    margin:10px 0;
 }
 
-.checkout-page .co-table th,
-.checkout-page .co-table td {
-    padding: 10px;
-    border-bottom: 1px solid #f1f5f9;
-    font-size: 14px;
+.total{
+    font-size:20px;
+    font-weight:bold;
+    border-top:2px solid #ddd;
+    padding-top:10px;
 }
 
-.checkout-page .co-table th {
-    text-align: left;
-    color: #718096;
+.btn{
+    display:block;
+    text-align:center;
+    background:#1b4332;
+    color:white;
+    padding:12px;
+    border-radius:8px;
+    text-decoration:none;
+    margin-top:15px;
 }
 
-/* Summary */
-.checkout-page .co-summary {
-    position: sticky;
-    top: 20px;
+@media(max-width:800px){
+    .grid{
+        grid-template-columns:1fr;
+    }
 }
-
-.checkout-page .co-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-}
-
-.checkout-page .co-total {
-    border-top: 1px solid #e2e8f0;
-    margin-top: 10px;
-    padding-top: 10px;
-    font-weight: 700;
-}
-
-/* ✅ BUTTON SAFE (NO GLOBAL EFFECT) */
-.checkout-page .co-btn {
-    display: block;
-    width: 100%;
-    text-align: center;
-
-    padding: 14px;
-    margin-top: 15px;
-
-    background: #1b4332;
-    color: white;
-
-    border-radius: 30px;
-    text-decoration: none;
-
-    font-weight: 600;
-    transition: 0.3s;
-}
-
-.checkout-page .co-btn:hover {
-    background: #0f2c20;
-    transform: translateY(-2px);
-}
-
-.checkout-page .co-btn:active {
-    transform: scale(0.97);
-}
-
 </style>
 
-<div class="checkout-page">
 
-    <h2 class="co-title">Checkout</h2>
+<div class="checkout">
 
-    <div class="co-grid">
+<h1>Checkout</h1>
 
-        <!-- LEFT -->
-        <div>
+<div class="grid">
 
-            <!-- Customer Details -->
-            <!-- Customer Details -->
-<div class="co-card">
-    <h3>Shipping Details</h3>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+<!-- Left Section -->
+<div>
+
+    <div class="card">
+        <h2>Delivery Address</h2>
+
         <p><b>Name:</b> {{ customer.name }}</p>
         <p><b>Phone:</b> {{ customer.phone }}</p>
-        <p><b>Email:</b> {{ customer.email }}</p>
         <p><b>District:</b> {{ customer.district.name }}</p>
         <p><b>Location:</b> {{ customer.location }}</p>
+        <p><b>Address:</b> {{ customer.address }}</p>
+
     </div>
 
-    <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 15px 0;">
 
-    <!-- Address & Pincode Boxes -->
-    <div style="background: #f8fafc; padding: 15px; border-radius: 10px; border: 1px dashed #cbd5e1;">
-        <div style="margin-bottom: 10px;">
-            <span style="font-size: 12px; text-transform: uppercase; color: #64748b; font-weight: 700;">Delivery Address</span>
-            <p style="margin: 5px 0 0 0; color: #1b4332; line-height: 1.5;">{{ customer.address }}</p>
-        </div>
-        <div>
-            <span style="font-size: 12px; text-transform: uppercase; color: #64748b; font-weight: 700;">Pincode</span>
-            <p style="margin: 5px 0 0 0; color: #1b4332; font-weight: 600;">{{ customer.pincode }}</p>
-        </div>
+    <div class="card">
+
+        <h2>Order Items</h2>
+
+        <table>
+
+            <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+
+
+            {% for item in cart_items %}
+
+            <tr>
+
+                <td>{{ item.product.ProductName }}</td>
+
+                <td>{{ item.product.category.category_name }}</td>
+
+                <td>{{ item.quantity }}</td>
+
+                <td>₹{{ item.product.ProductPrice }}</td>
+
+                <td>₹{{ item.item_total }}</td>
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
     </div>
-    
-    <p style="margin-top: 15px; font-size: 13px; color: #718096;">
-        <b>Nearest Landmark/Location:</b> {{ customer.location }}
-    </p>
+
 </div>
-            <!-- Products -->
-            <div class="co-card">
-                <h3>Order Items</h3>
 
-                <table class="co-table">
 
-                    <tr>
-                        <th>Product</th>
-                        <th>Category</th>
-                        <th>Qty</th>
-                        <th>Price</th>
-                        <th>Total</th>
-                    </tr>
+<!-- Right Section -->
+<div>
 
-                    {% for item in cart_items %}
-                    <tr>
-                        <td>{{ item.product.ProductName }}</td>
-                        <td>{{ item.product.category.category_name }}</td>
-                        <td>{{ item.quantity }}</td>
-                        <td>₹{{ item.product.ProductPrice }}</td>
-                        <td>₹{{ item.item_total }}</td>
-                    </tr>
-                    {% endfor %}
+    <div class="card">
 
-                </table>
-            </div>
+        <h2>Order Summary</h2>
 
+        <div class="row">
+            <span>Subtotal</span>
+            <span>₹{{ total }}</span>
         </div>
 
-        <!-- RIGHT -->
-        <div class="co-summary">
 
-            <div class="co-card">
-
-                <h3>Order Summary</h3>
-
-                <div class="co-row">
-                    <span>Subtotal</span>
-                    <span>₹{{ total }}</span>
-                </div>
-
-                <div class="co-row">
-                    <span>Shipping</span>
-                    <span>Free</span>
-                </div>
-
-                <div class="co-total">
-                    <span>Total</span>
-                    <span>₹{{ total }}</span>
-                </div>
-
-                <a href="{% url 'payment' %}" class="co-btn">
-                        Place Order
-                </a>
-
-            </div>
-
+        <div class="row">
+            <span>Shipping Fee</span>
+            <span>Free</span>
         </div>
+
+
+        <div class="row total">
+            <span>Total Amount</span>
+            <span>₹{{ total }}</span>
+        </div>
+
+
+        <a href="{% url 'payment' %}" class="btn">
+            Proceed to Payment
+        </a>
 
     </div>
+
+</div>
+
+
+</div>
 
 </div>
 

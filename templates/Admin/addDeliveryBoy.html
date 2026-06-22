@@ -1,124 +1,79 @@
 {% extends 'adminHeader.html' %}
 {% load static %}
-
 {% block content %}
-<div class="container-fluid my-4">
+
+<style>
+    .wrap { max-width: 1200px; margin: 30px auto; padding: 0 20px; font-family: system-ui, sans-serif; color: #1e293b; }
+    .title { font-size: 1.6rem; font-weight: 700; margin-bottom: 24px; color: #0f172a; }
     
-    <!-- Page Header Title -->
-    <div class="border-bottom pb-2 mb-4">
-        <h2 class="text-dark"><i class="bi bi-truck text-success me-2"></i> Delivery Management</h2>
-    </div>
+    .panel { display: grid; grid-template-columns: 320px 1fr; gap: 24px; align-items: start; }
+    .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .card-h { padding: 14px 20px; background: #0f172a; color: #fff; font-size: 15px; font-weight: 600; }
+    .bg-green { background: #16a34a; }
     
-    <div class="row">
-        
-        <!-- LEFT SIDE: Simple Entry Form Card -->
-        <div class="col-md-4 mb-4">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-success text-white py-3">
-                    <h5 class="card-title mb-0"><i class="bi bi-person-plus-fill me-2"></i>Add New Driver</h5>
-                </div>
-                <div class="card-body p-4">
-                    <form method="POST" action="{% url 'adddeliveryboy' %}">
-                        {% csrf_token %}
-                        
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold text-muted small">Full Name</label>
-                            <input type="text" name="name" class="form-control" placeholder="Enter name" required>
-                        </div>
+    form { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+    label { font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; }
+    input, textarea { width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; box-sizing: border-box; outline: none; }
+    input:focus, textarea:focus { border-color: #16a34a; }
+    
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+    th { background: #f8fafc; color: #475569; font-weight: 600; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8fafc; }
+    
+    .badge { padding: 2px 8px; border-radius: 4px; background: #f1f5f9; border: 1px solid #cbd5e1; font-size: 12px; }
+    .btn-del { padding: 6px 12px; font-size: 13px; font-weight: 600; color: #dc3545; border: 1px solid #dc3545; border-radius: 4px; text-decoration: none; transition: 0.2s; }
+    .btn-del:hover { background: #dc3545; color: #fff; }
+    
+    @media (max-width: 900px) { .panel { grid-template-columns: 1fr; } }
+</style>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold text-muted small">Phone Number</label>
-                            <input type="text" name="phone" class="form-control" placeholder="Enter contact info" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold text-muted small">Email Address</label>
-                            <input type="email" name="email" class="form-control" placeholder="name@example.com" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold text-muted small">Username</label>
-                            <input type="text" name="username" class="form-control" placeholder="Choose a username" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold text-muted small">Password</label>
-                            <input type="password" name="password" class="form-control" placeholder="Create a password" required>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold text-muted small">Home Address</label>
-                            <textarea name="address" class="form-control" rows="3" placeholder="Enter residential address" required></textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-success w-100 py-2 fw-bold">
-                            <i class="bi bi-check-circle me-1"></i> Register Driver
-                        </button>
-                    </form>
-                </div>
-            </div>
+<div class="wrap">
+    <div class="title">Delivery Management</div>
+    
+    <div class="panel">
+        <div class="card">
+            <div class="card-h bg-green">Add New Driver</div>
+            <form method="POST" action="{% url 'adddeliveryboy' %}">
+                {% csrf_token %}
+                <div><label>Full Name</label><input type="text" name="name" placeholder="Enter name" required></div>
+                <div><label>Phone Number</label><input type="text" name="phone" placeholder="Contact number" required></div>
+                <div><label>Email Address</label><input type="email" name="email" placeholder="email@example.com" required></div>
+                <div><label>Username</label><input type="text" name="username" placeholder="Choose username" required></div>
+                <div><label>Password</label><input type="password" name="password" placeholder="Create password" required></div>
+                <div><label>Home Address</label><textarea name="address" rows="2" placeholder="Residential address" required></textarea></div>
+                <button type="submit" style="background:#16a34a; color:#fff; border:none; padding:10px; border-radius:6px; font-weight:600; cursor:pointer; margin-top:8px;">Register Driver</button>
+            </form>
         </div>
 
-        <!-- RIGHT SIDE: Clear Data Table Card -->
-        <div class="col-md-8">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-dark text-white py-3">
-                    <h5 class="card-title mb-0"><i class="bi bi-person-lines-fill"></i>&nbsp;Active Driver Roster</h5>
-                </div>
-                <div class="card-body p-0">
-                    {% if delivery_boys %}
-                        <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Phone</th>
-                                        <th>Email</th>
-                                        <th>Username</th>
-                                        <th>Address</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for boy in delivery_boys %}
-                                        <tr>
-                                            <td><span class="fw-bold text-dark">{{ boy.name }}</span></td>
-                                            <td>{{ boy.phone }}</td>
-                                            <td><span class="text-muted small">{{ boy.email }}</span></td>
-                                            <td><span class="badge bg-light text-dark border">{{ boy.username }}</span></td>
-                                            <td><small class="text-secondary">{{ boy.address }}</small></td>
-                                            <td style="padding: 0; margin: 0; text-align: right; background: none; border: none; vertical-align: middle;" class="pe-4">
-                                                <a href="{% url 'delete-delivery-boy' id=boy.deliveryboy_id %}" 
-                                                   style="display: inline-block; 
-                                                          padding: 6px 14px; 
-                                                          font-family: 'Segoe UI', system-ui, sans-serif; 
-                                                          font-size: 15px; 
-                                                          font-weight: 600;
-                                                          color: #dc3545; 
-                                                          text-decoration: none !important; 
-                                                          border: 1px solid #dc3545;
-                                                          border-radius: 4px;
-                                                          background-color: transparent;
-                                                          transition: all 0.2s ease;"
-                                                   onmouseover="this.style.backgroundColor='#dc3545'; this.style.color='#ffffff';" 
-                                                   onmouseout="this.style.backgroundColor='transparent'; this.style.color='#dc3545';">
-                                                   Remove
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    {% else %}
-                        <div class="p-5 text-center text-muted">
-                            <i class="bi bi-folder-x display-4 text-warning"></i>
-                            <p class="mt-2 mb-0 fw-semibold">No drivers listed in the active database.</p>
-                        </div>
-                    {% endif %}
-                </div>
+        <div class="card">
+            <div class="card-h">Active Driver Roster</div>
+            {% if delivery_boys %}
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr><th>Name</th><th>Phone</th><th>Email</th><th>Username</th><th>Address</th><th>Action</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for boy in delivery_boys %}
+                        <tr>
+                            <td><strong>{{ boy.name }}</strong></td>
+                            <td>{{ boy.phone }}</td>
+                            <td><span style="color:#64748b;">{{ boy.email }}</span></td>
+                            <td><span>{{ boy.username }}</span></td>
+                            <td><small style="color:#64748b;">{{ boy.address }}</small></td>
+                            <td><a href="{% url 'delete-delivery-boy' id=boy.deliveryboy_id %}" class="btn-del">Remove</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
+            {% else %}
+            <div style="padding: 40px; text-align: center; color: #64748b; font-weight: 500;">No drivers listed in the active database.</div>
+            {% endif %}
         </div>
-
     </div>
 </div>
+
 {% endblock %}

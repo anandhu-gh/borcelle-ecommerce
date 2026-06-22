@@ -1,23 +1,26 @@
 {% extends "adminHeader.html" %}
 {% block content %}
-
 <style>
-    .wrap { width: 90%; margin: 20px auto; font-family: sans-serif; }
-    .flex-container { display: flex; gap: 40px; }
-    .box { flex: 1; border: 1px solid #ccc; padding: 20px; border-radius: 8px; background: #fff; }
-    select, input { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #ccc; }
-    button { width: 100%; padding: 10px; background: #111827; color: white; border: none; border-radius: 5px; cursor: pointer; }
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-    th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
+    .wrap { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; }
+    .wrap h2 { font-size: 22px; font-weight: 700; color: #0f172a; margin-bottom: 24px; }
+    .flex-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 32px; }
+    .form-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 8px; height: fit-content; }
+    .form-box h3 { font-size: 16px; font-weight: 600; color: #0f172a; margin-bottom: 16px; }
+    select, input { width: 100%; padding: 10px; margin-bottom: 14px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 14px; background: #ffffff; }
+    button { width: 100%; padding: 10px; background: #0f172a; color: white; border: none; border-radius: 6px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s; }
+    button:hover { background: #1e293b; }
+    table { width: 100%; border-collapse: collapse; }
+    th { background: #f8fafc; padding: 10px 12px; font-weight: 600; color: #475569; font-size: 13px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+    td { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 13px; color: #334155; }
 </style>
 
 <div class="wrap">
-    <h2>Locations</h2>
+    <h2>Register Location</h2>
     
-    <div class="flex-container">
-        <div class="box">
+    <div class="flex-grid">
+        <div class="form-box">
             <h3>Add Location</h3>
-            <form method="POST" action="{% url 'addlocation' %}">
+            <form method="POST" action="{% url 'addlocation' %}\">
                 {% csrf_token %}
                 <select name="district" required>
                     <option value="" disabled selected>Choose District</option>
@@ -25,29 +28,27 @@
                         <option value="{{ d.district_id }}">{{ d.name }}</option>
                     {% endfor %}
                 </select>
-                <input type="text" name="location" placeholder="Location Name" required>
-                <button type="submit">Save Location</button>
+                <input type="text" name="location" placeholder="Enter location name" required>
+                <button type="submit">Register Location</button>
             </form>
         </div>
 
-        <div class="box">
-            <h3>Filter Directory</h3>
-            <select id="district-filter">
-                <option value="all">All Locations</option>
+        <div>
+            <select id="district-filter" style="max-width: 250px;">
+                <option value="">Filter by District</option>
                 {% for d in districts %}
                     <option value="{{ d.district_id }}">{{ d.name }}</option>
                 {% endfor %}
             </select>
 
-            <table>
+            <table style="border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden;">
                 <thead>
                     <tr>
-                        <th>SL No</th>
+                        <th style="width: 80px;">SL No</th>
                         <th>Location Name</th>
                     </tr>
                 </thead>
-                <tbody id="locations-table">
-                    </tbody>
+                <tbody id="locations-table"></tbody>
             </table>
         </div>
     </div>
@@ -56,31 +57,19 @@
 <script>
 document.getElementById("district-filter").onchange = function() {
     let distId = this.value;
-
     fetch("{% url 'filter_locations' %}?district=" + distId)
         .then(response => response.json())
         .then(data => {
             let htmlRows = "";
-            
             for (let i = 0; i < data.length; i++) {
-                htmlRows += "<tr>";
-                htmlRows += "<td>" + (i + 1) + "</td>";
-                htmlRows += "<td>" + data[i].location + "</td>";
-                htmlRows += "</tr>";
+                htmlRows += "<tr><td>" + (i + 1) + "</td><td>" + data[i].location + "</td></tr>";
             }
-            
             if(data.length === 0) {
-                htmlRows = "<tr><td colspan='2' style='text-align:center; color:gray;'>No records found</td></tr>";
+                htmlRows = "<tr><td colspan='2' style='text-align:center; color:#94a3b8;'>No structural records found inside target matrix select node</td></tr>";
             }
-
             document.getElementById("locations-table").innerHTML = htmlRows;
         });
 };
-
-// Fire filtering load immediately upon layout load window rendering
-window.onload = function() {
-    document.getElementById("district-filter").onchange();
-};
+window.onload = function() { document.getElementById("district-filter").onchange(); };
 </script>
-
 {% endblock %}

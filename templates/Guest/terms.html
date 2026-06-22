@@ -1,94 +1,89 @@
-{% extends "guestHeaderFooter.html" %}
+{% extends "customerHeader.html" %}
 {% load static %}
 {% block content %}
 
 <style>
     .policy-editorial {
-        max-width: 900px;
-        margin: 80px auto;
-        padding: 0 30px;
-        font-family: 'Segoe UI', system-ui, sans-serif;
+        max-width: 850px;
+        margin: 60px auto 100px;
+        padding: 0 20px;
+        font-family: 'Inter', sans-serif;
         color: #334155;
     }
 
-    /* Minimal Stark Header */
-    .policy-intro {
-        margin-bottom: 60px;
-    }
-
+    .policy-intro { margin-bottom: 60px; }
     .policy-intro h1 {
-        font-size: 42px;
-        font-weight: 800;
-        color: #0f172a;
-        margin: 0 0 10px 0;
-        letter-spacing: -1px;
+        font-family: 'Playfair Display', serif;
+        font-size: 3.2rem;
+        font-weight: 700;
+        color: #1b4332;
+        margin: 0 0 12px 0;
     }
-
     .meta-line {
-        font-size: 13px;
+        font-size: 12px;
         text-transform: uppercase;
         letter-spacing: 2px;
-        color: #64748b;
-        font-weight: 600;
+        color: #94a3b8;
+        font-weight: 700;
     }
 
-    /* Document Index Section Layout */
+    /* System Index Clause Rows */
     .clause-section {
         display: grid;
-        grid-template-columns: 80px 1fr;
+        grid-template-columns: 100px 1fr;
         gap: 20px;
-        padding: 40px 0;
+        padding: 45px 0;
         border-top: 1px solid #e2e8f0;
     }
+    .clause-section:last-child { border-bottom: 1px solid #e2e8f0; }
 
-    .clause-section:last-child {
-        border-bottom: 1px solid #e2e8f0;
-    }
-
-    @media (max-width: 600px) {
-        .clause-section { grid-template-columns: 1fr; gap: 10px; padding: 30px 0; }
+    @media (max-width: 650px) {
+        .clause-section { grid-template-columns: 1fr; gap: 12px; padding: 35px 0; }
     }
 
     .clause-index {
-        font-size: 18px;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.4rem;
         font-weight: 700;
-        color: #1b4332;
-        font-variant-numeric: tabular-nums;
+        color: #74c69d;
     }
-
     .clause-content h3 {
-        font-size: 20px;
-        font-weight: 600;
-        color: #0f172a;
-        margin: 0 0 15px 0;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0 0 16px 0;
     }
-
     .clause-body {
-        font-size: 15px;
-        line-height: 1.7;
+        font-size: 1rem;
+        line-height: 1.75;
         color: #475569;
         margin: 0;
     }
 
     .sub-points {
-        margin-top: 15px;
-        padding-left: 18px;
-        list-style-type: square;
+        margin-top: 20px;
+        padding-left: 20px;
+        list-style-type: none;
     }
-
     .sub-points li {
-        font-size: 14px;
+        font-size: 0.95rem;
         color: #64748b;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
+        position: relative;
+    }
+    .sub-points li::before {
+        content: "—";
+        position: absolute;
+        left: -20px;
+        color: #74c69d;
     }
 </style>
 
 <div class="policy-editorial">
     
-    <!-- Title Node -->
     <div class="policy-intro">
-        <h1>Operating Terms & Rules</h1>
-        <div class="meta-line">Legal Framework / June 2026</div>
+        <h1>Terms of Architecture</h1>
+        <div class="meta-line">Legal System Ledger / Updated June 2026</div>
     </div>
 
     <!-- Clause 01 -->
@@ -97,7 +92,7 @@
         <div class="clause-content">
             <h3>System Execution Parameters</h3>
             <p class="clause-body">
-                By entering this site architecture, utilizing checkout modules, or initiating server requests, you automatically signify full assent to our active logistical frameworks and pricing profiles.
+                By entering this storefront architecture, deploying dynamic checkout modules, or initiating server requests, you automatically signify full assent to our active logistical frameworks, structural storage protocols, and pricing charts.
             </p>
         </div>
     </div>
@@ -108,11 +103,11 @@
         <div class="clause-content">
             <h3>Transactional Safety & Ledgers</h3>
             <p class="clause-body">
-                Payment procedures deploy instant gateway validations. Our databases bypass the long-term archival of raw credit tracking arrays, saving only basic card markers for absolute systemic integrity.
+                Payment procedures deploy instant gateway verification tokens. Our databases bypass long-term tracking archives of raw credit metrics, retaining only verified transaction hashes for system auditing safety.
             </p>
             <ul class="sub-points">
-                <li>Inventory holds only activate upon absolute payment verification.</li>
-                <li>Valuation adjustments might manifest dynamically matching storage parameters.</li>
+                <li>Factory inventory allocations lock exclusively upon validated payment signals.</li>
+                <li>Valuation adjustments may follow dynamic structural changes in materials costs.</li>
             </ul>
         </div>
     </div>
@@ -123,7 +118,7 @@
         <div class="clause-content">
             <h3>Geographic Restrictions</h3>
             <p class="clause-body">
-                Fulfilment pipelines correlate with localized hub boundaries. Users bear full responsibility for defining their accurate operational district filters prior to final purchase commitments.
+                Fulfillment pipelines connect directly with localized regional hub coordinates. Clients bear full responsibility for defining accurate operational district filters prior to authorizing checkout ledger actions.
             </p>
         </div>
     </div>

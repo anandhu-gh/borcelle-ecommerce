@@ -2,129 +2,125 @@
 {% block content %}
 
 <style>
-.pd-wrapper { padding: 20px 0 60px; }
+.pd-wrapper { padding: 40px 0 80px; font-family: 'Inter', sans-serif; }
 .pd-back {
   display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600;
-  color: #718096; text-decoration: none; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px;
+  color: #64748b; text-decoration: none; margin-bottom: 35px; text-transform: uppercase; letter-spacing: 1.5px;
+  transition: color 0.2s ease;
 }
 .pd-back:hover { color: #1b4332; }
 
-.pd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: flex-start; }
+.pd-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 60px; align-items: flex-start; }
 
-/* Left Image */
-.pd-img-container { position: sticky; top: 100px; border-radius: 20px; overflow: hidden; background: #f8fafc; box-shadow: 0 10px 30px rgba(0,0,0,0.05);}
+/* Left Media Container */
+.pd-img-container { 
+  position: sticky; top: 120px; border-radius: 24px; overflow: hidden; 
+  background: #f8fafc; box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+  border: 1px solid #e2e8f0;
+}
 .pd-img-container img { width: 100%; height: auto; display: block; object-fit: cover; }
 
-/* Right Details */
+/* Right Descriptive Node */
 .pd-badge {
-  display: inline-block; background: #d8f3dc; color: #1b4332; font-size: 11px;
-  font-weight: 700; padding: 6px 14px; border-radius: 50px; text-transform: uppercase;
-  letter-spacing: 1px; margin-bottom: 20px;
+  display: inline-block; background: #e8f5e9; color: #1b4332; font-size: 11px;
+  font-weight: 700; padding: 6px 16px; border-radius: 50px; text-transform: uppercase;
+  letter-spacing: 1px; margin-bottom: 24px; border: 1px solid #c8e6c9;
 }
-.pd-title { font-family: 'Playfair Display', serif; font-size: 2.8rem; font-weight: 700; color: #1b4332; margin-bottom: 8px; line-height: 1.1; }
-.pd-cat { font-size: 14px; color: #a0aec0; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 24px; }
-.pd-price { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 700; color: #2d3748; margin-bottom: 8px; }
-.pd-tax { font-size: 13px; color: #718096; margin-bottom: 30px; }
+.pd-title { font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 700; color: #1b4332; margin-bottom: 12px; line-height: 1.15; }
+.pd-cat { font-size: 12px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 24px; }
+.pd-price { font-family: 'Playfair Display', serif; font-size: 2.4rem; font-weight: 700; color: #1e293b; margin-bottom: 6px; }
+.pd-tax { font-size: 13px; color: #64748b; margin-bottom: 35px; display: flex; align-items: center; gap: 6px; }
 
-.pd-desc { font-size: 1rem; color: #4a5568; line-height: 1.8; margin-bottom: 30px; }
+.pd-desc { font-size: 1.05rem; color: #475569; line-height: 1.8; margin-bottom: 35px; }
 
-.pd-perks { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 40px; }
-.pd-perk-item { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; color: #2d3748; }
-.pd-perk-icon { width: 24px; height: 24px; border-radius: 50%; background: #d8f3dc; display: flex; align-items: center; justify-content: center; }
-.pd-perk-icon::after { content: ''; width: 8px; height: 8px; background: #1b4332; border-radius: 50%; }
+.pd-perks { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px; border-top: 1px solid #f1f5f9; padding-top: 30px; }
+.pd-perk-item { display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 500; color: #334155; }
+.pd-perk-icon { width: 20px; height: 20px; border-radius: 50%; background: #1b4332; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.pd-perk-icon::after { content: ''; width: 6px; height: 6px; background: #ffffff; border-radius: 50%; }
 
-/* Specs Table */
-.pd-specs { margin-top: 50px; border-top: 1px solid #e2e8f0; padding-top: 30px; }
-.pd-specs h4 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: #1b4332; margin-bottom: 20px; }
-.pd-specs table { width: 100%; border-collapse: collapse; }
-.pd-specs td { padding: 12px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
-.pd-specs td:first-child { font-weight: 600; color: #4a5568; width: 40%; }
-.pd-specs td:last-child { color: #718096; }
-
-@media (max-width: 991px) { .pd-grid { grid-template-columns: 1fr; gap: 40px; } .pd-img-container { position: relative; top: 0; } }
-
-/* Container to hold both elements */
+/* Quantity Selector & Submission Wrap */
 .simple-cart-wrap {
     display: flex;
-    height: 50px;
+    height: 54px;
     width: 100%;
-    max-width: 450px;
-    font-family: 'Inter', sans-serif;
+    max-width: 480px;
+    margin-bottom: 15px;
 }
 
-/* Quantity Container */
 .qty-container {
     display: flex;
     align-items: center;
-    border: 1px solid #1b4332;
-    background: #fff;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
 }
 
 .qty-btn {
-    width: 45px;
+    width: 50px;
     height: 100%;
     border: none;
     background: none;
-    color: #1b4332;
-    font-size: 20px;
+    color: #1e293b;
+    font-size: 18px;
+    font-weight: 600;
     cursor: pointer;
     transition: background 0.2s;
 }
-
-.qty-btn:hover { background: #f1f5f9; }
+.qty-btn:hover { background: #f8fafc; }
 
 .qty-container input {
-    width: 40px;
+    width: 45px;
     border: none;
     text-align: center;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 16px;
     color: #1b4332;
     background: transparent;
     pointer-events: none;
 }
 
-/* Add to Cart Button */
 .add-btn-simple {
     background: #1b4332;
-    width: 150px;
+    flex-grow: 1;
     margin-left: 20px;
     color: #ffffff;
     border: 1px solid #1b4332;
-    border-radius: 15px;
+    border-radius: 12px;
     font-size: 13px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
 }
+.add-btn-simple:hover { background: #112a1f; border-color: #112a1f; transform: translateY(-1px); }
+.add-btn-simple:disabled { background: #cbd5e1; border-color: #cbd5e1; color: #94a3b8; cursor: not-allowed; transform: none; }
 
-.add-btn-simple:hover { background: #2d6a4f; border-color: #2d6a4f; }
+.stock-msg { display: none; color: #ef4444; font-size: 13px; font-weight: 600; margin-top: 12px; }
+.price-banner { font-size: 0.95rem; color: #64748b; font-weight: 500; }
+.price-banner span { color: #1b4332; font-weight: 700; font-size: 1.1rem; }
 
-/* This style is applied by JS when qty exceeds stock */
-.add-btn-simple:disabled {
-    background: #cbd5e0;
-    border-color: #cbd5e0;
-    cursor: not-allowed;
-}
+/* Structural Table Layout */
+.pd-specs { margin-top: 50px; border-top: 1px solid #e2e8f0; padding-top: 35px; }
+.pd-specs h4 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: #1b4332; margin-bottom: 20px; font-weight: 700; }
+.pd-specs table { width: 100%; border-collapse: collapse; }
+.pd-specs td { padding: 14px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+.pd-specs td:first-child { font-weight: 600; color: #334155; width: 35%; }
+.pd-specs td:last-child { color: #64748b; }
 
-/* Remove number input arrows */
-.qty-container input::-webkit-outer-spin-button,
-.qty-container input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+@media (max-width: 991px) { .pd-grid { grid-template-columns: 1fr; gap: 40px; } .pd-img-container { position: relative; top: 0; } }
 
-/* The warning message — hidden by default, JS shows it when needed */
-.stock-msg {
-    display: none;
-    color: #e53e3e;
-    font-size: 13px;
-    font-weight: 600;
-    margin-top: 8px;
-}
+/* Review Node */
+.review-section { margin-top: 65px; border-top: 1px solid #e2e8f0; padding-top: 40px; max-width: 750px; }
+.review-section h4 { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; color: #1b4332; margin-bottom: 25px; }
+.review-card { display: flex; gap: 16px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+.review-avatar { width: 40px; height: 40px; border-radius: 50%; background: #f1f5f9; color: #1b4332; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.2rem; }
+.review-meta { display: flex; justify-content: space-between; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
 </style>
 
 <div class="container pd-wrapper">
-  <a href="{% url 'allcategories' %}" class="pd-back">← Back to Shop</a>
+  <a href="{% url 'allcategories' %}" class="pd-back"><i class="fa-solid fa-arrow-left me-1"></i> Return to Collections</a>
   
   <div class="pd-grid">
     <div class="pd-img-container">
@@ -137,178 +133,99 @@
       <div class="pd-cat">{{ product.category.category_name }}</div>
       
       <div class="pd-price">₹{{ product.ProductPrice }}</div>
-      <div class="pd-tax">Free Delivery &bull; Inclusive of all taxes</div>
+      <div class="pd-tax">
+         <span class="text-success fw-semibold">Free Delivery</span> &bull; Inclusive of all architectural duties
+      </div>
 
       <div class="pd-desc">{{ product.ProductDescription }}</div>
 
       <div class="pd-perks">
-        <div class="pd-perk-item"><div class="pd-perk-icon"></div> Premium Materials</div>
-        <div class="pd-perk-item"><div class="pd-perk-icon"></div> Expertly Crafted</div>
-        <div class="pd-perk-item"><div class="pd-perk-icon"></div> Secure Packaging</div>
-        <div class="pd-perk-item"><div class="pd-perk-icon"></div> 2-Year Warranty</div>
+        <div class="pd-perk-item"><div class="pd-perk-icon"></div> Premium Base Alloys</div>
+        <div class="pd-perk-item"><div class="pd-perk-icon"></div> Hand-Tailored Joints</div>
+        <div class="pd-perk-item"><div class="pd-perk-icon"></div> Structurally Reinforced</div>
+        <div class="pd-perk-item"><div class="pd-perk-icon"></div> 2-Year Studio Warranty</div>
       </div>
 
       <form method="POST" action="{% url 'addtocart' id=product.ProductId %}">
         {% csrf_token %}
-
         <div class="simple-cart-wrap">
           <div class="qty-container">
-
-            <!-- minus button calls checkStock() after reducing qty -->
-            <button type="button" class="qty-btn"
-              onclick="this.parentNode.querySelector('input').stepDown(); checkStock();">-</button>
-
+            <button type="button" class="qty-btn" onclick="this.parentNode.querySelector('input').stepDown(); checkStock();">-</button>
             <input type="number" id="product-qty" name="quantity" value="1" min="1" readonly>
-
-            <!-- plus button calls checkStock() after increasing qty -->
-            <button type="button" class="qty-btn"
-              onclick="this.parentNode.querySelector('input').stepUp(); checkStock();">+</button>
-
+            <button type="button" class="qty-btn" onclick="this.parentNode.querySelector('input').stepUp(); checkStock();">+</button>
           </div>
-
           <button type="submit" id="cart-btn" class="add-btn-simple">Add to Cart</button>
         </div>
-
       </form>
 
-      <!-- Warning message shown when qty goes over available stock -->
       <p id="stock-msg" class="stock-msg">
-        ⚠ Only {{ product.stock }} item(s) available!
+        ⚠ Limited Registry Allocation: Only {{ product.stock }} items remain.
       </p>
 
-      <!-- Running total display -->
-      <div class="price-banner" style="margin-top: 3px;">
-        Total(₹): <span id="total-price-display">{{ product.ProductPrice }}/-</span>
+      <div class="price-banner">
+        Cumulative Settlement: <span id="total-price-display">₹{{ product.ProductPrice }}/-</span>
       </div>
 
       <div class="pd-specs">
-        <h4>Product Details</h4>
+        <h4>Technical Specifications</h4>
         <table>
           <tr><td>Collection Category</td><td>{{ product.category.category_name }}</td></tr>
-          <tr><td>Assembly Required</td><td>No (Delivered Pre-assembled)</td></tr>
-          <tr><td>Maintenance</td><td>Wipe clean with a dry cloth</td></tr>
-          <tr><td>Return Policy</td><td>30-Day Hassle-Free Returns</td></tr>
+          <tr><td>Assembly Paradigm</td><td>Pre-assembled Architecture</td></tr>
+          <tr><td>Maintenance Routine</td><td>Dry microfiber linen wipe down</td></tr>
+          <tr><td>Studio Return Rules</td><td>Signature 30-Day Evaluation Window</td></tr>
         </table>
       </div>
-
     </div>
+  </div>
+
+  <!-- CLIENT REVIEWS LEDGER -->
+  <div class="review-section">
+      <h4>Client Evaluations</h4>
+      {% if reviews %}
+          {% for r in reviews %}
+          <div class="review-card">
+              <div class="review-avatar"><i class="bi bi-person-circle"></i></div>
+              <div style="flex: 1;">
+                  <div class="review-meta">
+                      <span style="color: #1b4332;">{{ r.customer.name }}</span>
+                      <span style="color: #eab308;"><i class="fa-solid fa-star me-1"></i>{{ r.rating }}/5</span>
+                  </div>
+                  <div style="font-size: 14px; color: #475569; line-height: 1.5; margin-top: 4px;">
+                      {{ r.message }}
+                  </div>
+              </div>
+          </div>
+          {% endfor %}
+      {% else %}
+          <p class="text-muted small">No verified performance metrics submitted for this asset configuration yet.</p>
+      {% endif %}
   </div>
 </div>
 
-<!-- CUSTOMER REVIEWS -->
-<div style="margin-top:40px; border-top:1px solid #e2e8f0; padding-top:18px; max-width:650px;">
-
-    <h4 style="font-size:16px; font-weight:700; color:#1b4332; margin-bottom:12px;">
-        Customer Reviews
-    </h4>
-
-    {% if reviews %}
-
-        {% for r in reviews %}
-        <div style="
-            display:flex;
-            gap:10px;
-            background:#fff;
-            border:1px solid #eee;
-            border-radius:8px;
-            padding:10px 12px;
-            margin-bottom:10px;
-        ">
-
-            <!-- PROFILE ICON -->
-            <div style="
-                width:34px;
-                height:34px;
-                border-radius:50%;
-                background:#d9dada;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                flex-shrink:0;
-            ">
-                <i class="bi bi-person-circle"></i>
-            </div>
-
-            <!-- CONTENT -->
-            <div style="flex:1;">
-
-                <!-- NAME + RATING -->
-                <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:600;">
-
-                    <span style="color:#1b4332;">
-                        {{ r.customer.name }}
-                    </span>
-
-                    <span style="color:#f59e0b; font-size:12px;">
-                        ⭐ {{ r.rating }}/5
-                    </span>
-
-                </div>
-
-                <!-- MESSAGE -->
-                <div style="margin-top:4px; font-size:12px; color:#555; line-height:1.4;">
-                    {{ r.message }}
-                </div>
-
-            </div>
-
-        </div>
-        {% endfor %}
-
-    {% else %}
-
-        <p style="font-size:12px; color:#777;">
-            No reviews yet.
-        </p>
-
-    {% endif %}
-
-</div>
-
 <script>
-
-  // Step 1: Get the available stock number from Django
   var availableStock = {{ product.stock }};
-
-  // Step 2: Get the price from Django
   var pricePerItem = {{ product.ProductPrice }};
 
-  // Step 3: This function runs every time + or - is clicked
   function checkStock() {
-
-    // Get the current qty the user has selected
     var selectedQty = document.getElementById('product-qty').value;
-
-    // Get the Add to Cart button and the warning message
     var cartBtn  = document.getElementById('cart-btn');
     var stockMsg = document.getElementById('stock-msg');
 
-    // Check: is the selected qty MORE than what we have in stock?
     if (selectedQty > availableStock) {
-
-      // YES — show warning and disable the button
       stockMsg.style.display = 'block';
       cartBtn.disabled = true;
-
     } else {
-
-      // NO — hide warning and enable the button
       stockMsg.style.display = 'none';
       cartBtn.disabled = false;
-
     }
-
-    // Also update the total price display
     updatePrice();
   }
 
-  // Step 4: Calculate and show the running total
   function updatePrice() {
     var selectedQty = document.getElementById('product-qty').value;
     var total = pricePerItem * selectedQty;
-    document.getElementById('total-price-display').innerText = total.toFixed(2) + " /-";
+    document.getElementById('total-price-display').innerText = "₹" + total.toLocaleString('en-IN') + "/-";
   }
-
 </script>
 
 {% endblock %}

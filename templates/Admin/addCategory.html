@@ -1,68 +1,30 @@
 {% extends "adminHeader.html" %}
 {% block content %}
-
 <style>
-.admin-form-page { animation: fadeIn 0.4s ease; max-width: 550px; margin: 40px auto; }
-.back-link { display: inline-block; margin-bottom: 20px; font-size: 14px; font-weight: 500; color: #6b7280; text-decoration: none; transition: 0.2s; }
-.back-link:hover { color: #1b4332; }
-
-.admin-form-card {
-  background: #ffffff; border-radius: 16px; padding: 32px;
-  border: 1px solid #e5e7eb; box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-}
-
-.admin-form-card h3 { font-weight: 700; color: #111827; font-size: 1.6rem; margin-bottom: 24px; text-align: center; }
-
-.input-group { margin-bottom: 20px; }
-.input-group label { display: block; font-weight: 600; color: #374151; font-size: 14px; margin-bottom: 8px; }
-.input-group input[type="text"] {
-  width: 100%; padding: 12px 16px; border-radius: 10px;
-  border: 1px solid #d1d5db; background: #f9fafb; font-family: inherit; font-size: 14px;
-  color: #111827; transition: all 0.2s; outline: none;
-}
-.input-group input:focus { border-color: #1b4332; background: #ffffff; box-shadow: 0 0 0 4px rgba(27,67,50,0.1); }
-
-.file-input-wrapper {
-  border: 2px dashed #d1d5db; border-radius: 10px; padding: 16px;
-  text-align: center; background: #f9fafb; transition: 0.2s; cursor: pointer;
-}
-.file-input-wrapper:hover { border-color: #1b4332; background: #f0fdf4; }
-.file-input-wrapper input[type="file"] { width: 100%; font-size: 13px; color: #6b7280; }
-
-.btn-submit {
-  width: 100%; padding: 14px; background: #111827; color: #ffffff;
-  border: none; border-radius: 10px; font-weight: 600; font-size: 15px;
-  cursor: pointer; transition: all 0.2s; margin-top: 10px;
-}
-.btn-submit:hover { background: #374151; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
-
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .form-container { max-width: 500px; margin: 40px auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 28px; }
+    .form-container h3 { font-size: 20px; font-weight: 700; color: #0f172a; text-align: center; margin-bottom: 24px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 14px; font-weight: 600; color: #334155; margin-bottom: 6px; }
+    .form-control { width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: #f8fafc; }
+    .btn-submit { width: 100%; padding: 12px; background: #0f172a; color: #ffffff; border: none; border-radius: 8px; font-weight: 600; margin-top: 12px; transition: 0.2s; }
+    .btn-submit:hover { background: #1e293b; }
 </style>
 
-<div class="admin-form-page">
-  <a href="{% url 'adminhome' %}" class="back-link">← Return to Dashboard</a>
-
-  <div class="admin-form-card">
+<div class="form-container">
     <h3>Create Category</h3>
-
-    <form method="POST" enctype="multipart/form-data">
-      {% csrf_token %}
-
-      <div class="input-group">
-        <label>Category Name</label>
-        <input type="text" name="category_name" placeholder="e.g. Living Room, Outdoor..." required>
-      </div>
-
-      <div class="input-group">
-        <label>Category Display Image</label>
-        <div class="file-input-wrapper">
-          <input type="file" name="category_image">
+    <form method="POST" action="{% url 'addcategory' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Category Title Name</label>
+            <input type="text" name="name" class="form-control" placeholder="e.g. Living Room Furniture" required>
         </div>
-      </div>
 
-      <button type="submit" class="btn-submit">Add Category</button>
+        <div class="form-group">
+            <label>Category Banner/Icon Media Image</label>
+            <input type="file" name="image" class="form-control" accept="image/*" required>
+        </div>
+
+        <button type="submit" class="btn-submit">Create Structure Block</button>
     </form>
-  </div>
 </div>
-
 {% endblock %}
