@@ -71,7 +71,12 @@
         {% endif %}
     </div>
     {% empty %}
-    <p style="color: #64748b; text-align: center; margin-top: 40px;">You haven't placed any orders yet.</p>
+    <div style="text-align: center; margin: 4rem auto; font-family: system-ui, sans-serif;">
+    <div style="font-size: 2.5rem; margin-bottom: 0.5rem; opacity: 0.6;">🛍️</div>
+    <h4 style="margin: 0 0 0.25rem 0; color: #0f172a; font-size: 1rem; font-weight: 600;">No orders yet</h4>
+    <p style="margin: 0 0 1rem 0; color: #64748b; font-size: 0.875rem;">Your transaction history is completely empty.</p>
+    <a href="{% url 'productsview' %}" style="color: #0f172a; font-weight: 600; text-decoration: underline; font-size: 0.875rem;">Browse Products &rarr;</a>
+    </div>
     {% endfor %}
 </div>
 

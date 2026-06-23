@@ -1,47 +1,93 @@
 {% extends "adminHeader.html" %}
 {% block content %}
 <style>
-    .orders-container { max-width: 950px; margin: 0 auto; }
-    .page-title { font-size: 24px; font-weight: 700; color: #0f172a; margin-bottom: 24px; }
-    .order-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
-    .order-header { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; padding-bottom: 14px; border-bottom: 1px solid #f1f5f9; margin-bottom: 16px; font-size: 13px; color: #475569; }
-    .product-row { display: flex; align-items: center; gap: 16px; padding: 10px 0; border-bottom: 1px solid #fafafa; }
-    .product-row:last-child { border: none; }
-    .prod-img { width: 50px; height: 50px; border-radius: 6px; object-fit: cover; border: 1px solid #e2e8f0; }
-    .product-info { flex-grow: 1; }
-    .product-name { font-weight: 600; color: #0f172a; font-size: 14px; }
-    .product-meta { font-size: 13px; color: #64748b; margin-top: 2px; }
-    .status-paid { font-weight: 700; color: #16a34a; text-transform: uppercase; }
-    .empty-box { text-align: center; background: #ffffff; border: 1px solid #e2e8f0; padding: 40px; border-radius: 12px; color: #64748b; }
+    /* Absolute Isolation Styling - Scoped to prevent global theme leakage */
+    .orders-page-scope { max-width: 850px; margin: 2rem auto; padding: 0 1rem; font-family: system-ui, sans-serif; color: #334155; }
+    .orders-page-scope .scope-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .orders-page-scope .scope-revenue-badge { background: #f0fdf4; border: 1px solid #bbf7d0; color: #16a34a; padding: 0.5rem 1rem; border-radius: 99px; font-weight: 600; }
+    
+    /* Filter Module Scope */
+    .orders-page-scope .scope-filter-bar { display: flex; gap: 0.75rem; align-items: center; margin-bottom: 2rem; font-size: 0.9rem; background: #f8fafc; padding: 0.75rem 1rem; border-radius: 8px; }
+    .orders-page-scope .scope-filter-bar input[type="date"] { border: 1px solid #cbd5e1; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.85rem; background: #ffffff; color: #334155; }
+    .orders-page-scope .scope-action-btn { background: #0f172a; color: #fff; border: none; padding: 0.35rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 500; transition: opacity 0.2s; }
+    .orders-page-scope .scope-action-btn:hover { opacity: 0.9; }
+    
+    /* Structural Document Cards */
+    .orders-page-scope .scope-order-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+    .orders-page-scope .scope-info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1px dashed #e2e8f0; font-size: 0.85rem; }
+    .orders-page-scope .scope-meta-label { color: #64748b; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.25rem; }
+    .orders-page-scope .scope-meta-value { font-weight: 600; color: #0f172a; display: block; }
+    .orders-page-scope .scope-paid-status { background: #dcfce7; color: #15803d; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; display: inline-block; text-transform: uppercase; }
+    
+    /* Product Content Display Segments */
+    .orders-page-scope .scope-prod-item-row { display: flex; align-items: center; gap: 1rem; margin-top: 0.75rem; }
+    .orders-page-scope .scope-prod-thumb { width: 44px; height: 44px; border-radius: 8px; object-fit: cover; background: #f1f5f9; border: 1px solid #e2e8f0; }
+    .orders-page-scope .scope-empty-alert { text-align: center; padding: 3rem; color: #64748b; background: #fff; border: 1px dashed #cbd5e1; border-radius: 12px; }
 </style>
 
-<div class="orders-container">
-    <h2 class="page-title">Confirmed Transactions Manifest</h2>
+<div class="orders-page-scope">
+    
+    <div class="scope-header-row">
+        <h2 style="margin:0; font-size:1.5rem; font-weight:700; color:#0f172a;">Orders & Transactions</h2>
+        <div class="scope-revenue-badge">Revenue: ₹{{ total_revenue }}</div>
+    </div>
 
-    {% if data %}
-        {% for order in data %}
-        <div class="order-card">
-            <div class="order-header">
-                <div><b>System Master ID:</b> #{{ order.master_id }}</div>
-                <div><b>Payment Reference ID:</b> <span>{% if order.payment %}{{ order.payment.payment_id }}{% else %}N/A{% endif %}</span></div>
-                <div><b>Purchaser Account:</b> {{ order.customer.name }}</div>
-                <div><b>Gross Total:</b> <span class="fw-bold text-dark">₹{{ order.total_amount }}</span></div>
-                <div><b>Transaction Status:</b> <span class="status-paid">{% if order.payment %}{{ order.payment.status }}{% endif %}</span></div>
+    <form method="POST" class="scope-filter-bar">
+        {% csrf_token %}
+        <span style="font-weight:600; color:#475569;">Date Range:</span>
+        <input type="date" name="start_date" value="{{ start_date|default:'' }}">
+        <span style="color:#94a3b8;">to</span>
+        <input type="date" name="end_date" value="{{ end_date|default:'' }}">
+        <button type="submit" class="scope-action-btn">Apply</button>
+        {% if start_date or end_date %}
+            <a href="" style="color:#64748b; text-decoration:none; margin-left:0.5rem; font-size:0.85rem;">Reset</a>
+        {% endif %}
+    </form>
+
+    {% if orders %}
+        {% for order in orders %}
+        <div class="scope-order-card">
+            <div class="scope-info-grid">
+                <div>
+                    <span class="scope-meta-label">Order ID</span>
+                    <span class="scope-meta-value">#{{ order.order_id }}</span>
+                </div>
+                <div>
+                    <span class="scope-meta-label">Payment ID</span>
+                    <span class="scope-meta-value">{{ order.payment.payment_id|default:"N/A" }}</span>
+                </div>
+                <div>
+                    <span class="scope-meta-label">Customer</span>
+                    <span class="scope-meta-value">{{ order.customer.name }}</span>
+                </div>
+                <div>
+                    <span class="scope-meta-label">Total Amount</span>
+                    <span class="scope-meta-value" style="color:#10b981;">₹{{ order.total_amount }}</span>
+                </div>
+                <div>
+                    <span class="scope-meta-label">Status</span>
+                    <span class="scope-paid-status">{% if order.payment %}{{ order.payment.status }}{% else %}Pending{% endif %}</span>
+                </div>
             </div>
 
             {% for item in order.items %}
-            <div class="product-row">
-                <img src="{{ item.product.ProductImage.url }}" class="prod-img">
-                <div class="product-info">
-                    <div class="product-name">{{ item.product.ProductName }}</div>
-                    <div class="product-meta">Dispatched Shipment Unit Quantity: {{ item.quantity }} | Unit Rate: ₹{{ item.price }}</div>
+            <div class="scope-prod-item-row">
+                {% if item.product.ProductImage %}
+                    <img src="{{ item.product.ProductImage.url }}" class="scope-prod-thumb" alt="Thumbnail">
+                {% endif %}
+                <div style="flex-grow:1;">
+                    <div style="font-weight:600; font-size:0.9rem; color:#1e293b;">{{ item.product.ProductName }}</div>
+                    <div style="font-size:0.8rem; color:#64748b;">Qty: {{ item.quantity }} &middot; Price: ₹{{ item.price }}</div>
                 </div>
             </div>
             {% endfor %}
         </div>
         {% endfor %}
     {% else %}
-        <div class="empty-box">No confirmed orders found inside the records file data registry system. 📭</div>
+        <div class="scope-empty-alert">
+            No transactions found matching your criteria.
+        </div>
     {% endif %}
+
 </div>
 {% endblock %}
