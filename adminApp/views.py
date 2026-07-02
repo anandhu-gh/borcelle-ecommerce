@@ -116,7 +116,7 @@ def addProduct(request):
             </script>
         """)
 
-    # GET request, so just show the blank form again
+    # show the blank form again
     return render(request, 'Admin/addProduct.html', {
         'categories': categories
     })
